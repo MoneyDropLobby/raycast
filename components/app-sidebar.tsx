@@ -52,40 +52,56 @@ const data = {
   ],
   navMain: [
     {
-      title: "Debitoren",
+      title: "Kasse",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "Verkauf",
           url: "#",
         },
         {
-          title: "Starred",
+          title: "Retouren",
           url: "#",
         },
         {
-          title: "Settings",
+          title: "Gutscheine",
+          url: "#",
+        },
+        {
+          title: "Tagesabschluss",
+          url: "#",
+        },
+        {
+          title: "Kassenbuch",
           url: "#",
         },
       ],
     },
     {
-      title: "Kreditoren",
+      title: "Artikel",
       url: "#",
       icon: Bot,
       items: [
         {
-          title: "Genesis",
+          title: "Artikelverwaltung",
           url: "#",
         },
         {
-          title: "Explorer",
+          title: "Kategorien",
           url: "#",
         },
         {
-          title: "Quantum",
+          title: "Preise & Rabatte",
+          url: "#",
+        },
+        {
+          title: "Bestand",
+          url: "#",
+        },
+        {
+          title: "Inventur",
           url: "#",
         },
       ],
@@ -96,65 +112,77 @@ const data = {
       icon: BookOpen,
       items: [
         {
-          title: "Introduction",
+          title: "Kundenkartei",
           url: "#",
         },
         {
-          title: "Get Started",
+          title: "Bonusprogramm",
           url: "#",
         },
         {
-          title: "Tutorials",
+          title: "Kundenhistorie",
           url: "#",
         },
         {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "POS",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
+          title: "Newsletter",
           url: "#",
         },
         {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
+          title: "Kundenservice",
           url: "#",
         },
       ],
     },
     {
-      title: "Statistiken",
+      title: "Berichte",
+      url: "#",
+      icon: PieChart,
+      items: [
+        {
+          title: "Tagesumsatz",
+          url: "#",
+        },
+        {
+          title: "Verkaufsstatistik",
+          url: "#",
+        },
+        {
+          title: "Bestseller",
+          url: "#",
+        },
+        {
+          title: "Mitarbeiterleistung",
+          url: "#",
+        },
+        {
+          title: "Z-Berichte",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Einstellungen",
       url: "#",
       icon: Settings2,
       items: [
         {
-          title: "General",
+          title: "Mitarbeiter",
           url: "#",
         },
         {
-          title: "Team",
+          title: "Zahlungsarten",
           url: "#",
         },
         {
-          title: "Billing",
+          title: "Drucker & Geräte",
           url: "#",
         },
         {
-          title: "Limits",
+          title: "Steuersätze",
+          url: "#",
+        },
+        {
+          title: "Filialeinstellungen",
           url: "#",
         },
       ],
@@ -165,16 +193,6 @@ const data = {
       name: "System",
       url: "#",
       icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
     },
   ],
 };
