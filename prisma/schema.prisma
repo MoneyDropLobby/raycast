@@ -30,17 +30,21 @@ model User {
   active    Boolean  @default(true)
   lastLogin DateTime @default(now())
   lastLoginIp String?
+  filiales  Filiale[] @relation("UserFiliale") // Relation to Filiale
 }
 
 model Filiale {
   id        String   @id @default(uuid())
   strasse   String
   strasseNr String
-  plz Int
-  ort String
-  telefon String?
-  website String?
-  logo String?
+  plz       Int
+  ort       String
+  telefon   String?
+  website   String?
+  logo      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String   // Foreign key
+  user      User     @relation("UserFiliale", fields: [userId], references: [id]) // Relation to User
 }
+
