@@ -17,7 +17,7 @@ import {
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
-import { TeamSwitcher } from "@/components/team-switcher";
+import { FilialenSwitcher } from "@/components/filialen-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -33,7 +33,7 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  teams: [
+  filialen: [
     {
       name: "Acme Inc",
       logo: GalleryVerticalEnd,
@@ -52,7 +52,7 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Debitoren",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
@@ -72,7 +72,7 @@ const data = {
       ],
     },
     {
-      title: "Models",
+      title: "Kreditoren",
       url: "#",
       icon: Bot,
       items: [
@@ -91,7 +91,7 @@ const data = {
       ],
     },
     {
-      title: "Documentation",
+      title: "Kunden",
       url: "#",
       icon: BookOpen,
       items: [
@@ -114,7 +114,30 @@ const data = {
       ],
     },
     {
-      title: "Settings",
+      title: "POS",
+      url: "#",
+      icon: Settings2,
+      items: [
+        {
+          title: "General",
+          url: "#",
+        },
+        {
+          title: "Team",
+          url: "#",
+        },
+        {
+          title: "Billing",
+          url: "#",
+        },
+        {
+          title: "Limits",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Statistiken",
       url: "#",
       icon: Settings2,
       items: [
@@ -139,7 +162,7 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
+      name: "System",
       url: "#",
       icon: Frame,
     },
@@ -160,7 +183,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <FilialenSwitcher filialen={data.filialen} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
