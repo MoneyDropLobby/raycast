@@ -1,7 +1,7 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
   Card,
@@ -25,7 +25,7 @@ const chartData = [
   { month: "February", bargeld: 305, karte: 200 },
   { month: "March", bargeld: 237, karte: 120 },
   { month: "April", bargeld: 73, karte: 190 },
-  { month: "May", bargeld: 209, karte: 130 },
+  { month: "May", bargeld: 509, karte: 130 },
   { month: "June", bargeld: 214, karte: 140 },
 ];
 
@@ -44,8 +44,8 @@ export function BarChartStacked() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Bar Chart - Stacked + Legend</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Einnahmen (Bargeld & Karte)</CardTitle>
+        <CardDescription>Januar - Juni 2024</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -57,6 +57,12 @@ export function BarChartStacked() {
               tickMargin={10}
               axisLine={false}
               tickFormatter={(value) => value.slice(0, 3)}
+            />
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              tickMargin={10}
+              tickFormatter={(value) => `${value}`}
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
             <ChartLegend content={<ChartLegendContent />} />
@@ -77,10 +83,10 @@ export function BarChartStacked() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Diesen Monat 5.2% mehr Bargeld <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Bargeld: CHF 1000 Karte: CHF 1000
         </div>
       </CardFooter>
     </Card>
