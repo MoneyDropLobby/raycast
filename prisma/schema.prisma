@@ -19,8 +19,33 @@ enum Role {
   USER
 }
 
+enum Status {
+  AKTIV
+  INAKTIV
+}
+
+enum MwStSatz {
+  NORMAL    @map("8.10") // Normalsatz 8.1%
+  REDUZIERT @map("2.60") // Reduzierter Satz 2.6% (Lebensmittel, Bücher, Medikamente, etc.)
+  SONDER    @map("3.80") // Sondersatz 3.8% (Beherbergung)
+  OHNE      @map("0.00") // Befreit/Ausgenommen 0%
+}
+
+enum VerkaufsEinheit {
+  STUECK
+  GRAMM
+  KILOGRAMM
+  LITER
+  MILLILITER
+  METER
+  ZENTIMETER
+  PACKUNG
+  KARTON
+  PALETTE
+}
+
 model User {
-  id          String    @id @default(uuid())
+  id          String    @id @unique @default(cuid())
   email       String    @unique
   password    String
   createdAt   DateTime  @default(now())
@@ -34,7 +59,7 @@ model User {
 }
 
 model Filiale {
-  id        String   @id @default(uuid())
+  id        String   @id @unique @default(cuid())
   strasse   String
   strasseNr String
   plz       Int
@@ -50,7 +75,7 @@ model Filiale {
 }
 
 model Kassen {
-  id             String         @id @default(uuid())
+  id             String         @id @unique @default(cuid())
   name           String
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
@@ -61,10 +86,61 @@ model Kassen {
 }
 
 model KassenLayout {
-  id        String   @id @default(uuid())
+  id        String   @id @unique @default(cuid())
   name      String
   kassenId  String
   kassen    Kassen   @relation(fields: [kassenId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ArtikelHauptgruppe {
+  id           String               @id @unique @default(cuid())
+  name         String
+  beschreibung String?
+  aktiv        Boolean              @default(true)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  untergruppen ArtikelUntergruppe[]
+}
+
+model ArtikelUntergruppe {
+  id            String             @id @unique @default(cuid())
+  name          String
+  beschreibung  String?
+  aktiv         Boolean            @default(true)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  hauptgruppeId String
+  hauptgruppe   ArtikelHauptgruppe @relation(fields: [hauptgruppeId], references: [id])
+  artikel       Artikel[]
+}
+
+model Artikel {
+  artikelID       Int                @id @unique @default(autoincrement())
+  artikelName     String
+  beschreibung    String? // Description
+  verkaufspreis   Decimal            @db.Decimal(10, 2) // Selling price
+  einkaufspreis   Decimal            @db.Decimal(10, 2) // Purchase price
+  gewinnProzent   Decimal            @db.Decimal(10, 2) // Profit margin in percent
+  mwst            MwStSatz // VAT/Tax rate as enum
+  ean             String?            
+  warnmeldung     String?
+  mindestalter    Int?
+  garantietage    Int?
+  untergruppeId   String
+  untergruppe     ArtikelUntergruppe @relation(fields: [untergruppeId], references: [id])
+  verkaufsEinheit VerkaufsEinheit
+  mengeProEinheit Decimal            @default(1) 
+  status          Status             @default(AKTIV)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  tags            String[]
+  lagersystem     Boolean            @default(false)
+  lagerbestand    Int?
+  mindestbestand  Int?
+  letzterEinkauf  DateTime? // Date of last purchase
+  letzterVerkauf  DateTime? // Date of last sale
+
+  @@index([ean])
 }
