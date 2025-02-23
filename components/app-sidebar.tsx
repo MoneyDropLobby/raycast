@@ -77,6 +77,10 @@ const data = {
           title: "Kassenbuch",
           url: "#",
         },
+        {
+          title: "Kassenlayout",
+          url: "#",
+        },
       ],
     },
     {

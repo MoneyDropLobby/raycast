@@ -20,17 +20,17 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String
-  role      Role   @default(USER)
-  active    Boolean  @default(true)
-  lastLogin DateTime @default(now())
+  id          String    @id @default(uuid())
+  email       String    @unique
+  password    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  name        String
+  role        Role      @default(USER)
+  active      Boolean   @default(true)
+  lastLogin   DateTime  @default(now())
   lastLoginIp String?
-  filiales  Filiale[] @relation("UserFiliale") // Relation to Filiale
+  filiales    Filiale[]
 }
 
 model Filiale {
@@ -44,7 +44,27 @@ model Filiale {
   logo      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String   // Foreign key
-  user      User     @relation("UserFiliale", fields: [userId], references: [id]) // Relation to User
+  userId    String // Foreign key
+  user      User     @relation(fields: [userId], references: [id]) // Relation to User
+  kassen    Kassen[] // Relation to Kassen
 }
 
+model Kassen {
+  id             String         @id @default(uuid())
+  name           String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  filialeId      String
+  filiale        Filiale        @relation(fields: [filialeId], references: [id])
+  kassenLayoutId String
+  kassenLayout   KassenLayout[]
+}
+
+model KassenLayout {
+  id        String   @id @default(uuid())
+  name      String
+  kassenId  String
+  kassen    Kassen   @relation(fields: [kassenId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
