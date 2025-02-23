@@ -25,10 +25,10 @@ enum Status {
 }
 
 enum MwStSatz {
-  NORMAL     @map("8.10") /// 8.1% Normalsatz
-  REDUZIERT  @map("2.60") /// 2.6% Reduzierter Satz
-  SONDER     @map("3.80") /// 3.8% Sondersatz
-  OHNE       @map("0.00") /// 0% Befreit
+  NORMAL    @map("8.10") /// 8.1% Normalsatz
+  REDUZIERT @map("2.60") /// 2.6% Reduzierter Satz
+  SONDER    @map("3.80") /// 3.8% Sondersatz
+  OHNE      @map("0.00") /// 0% Befreit
 }
 
 enum VerkaufsEinheit {
@@ -72,17 +72,20 @@ model Filiale {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Restrict)
   kassen    Kassen[]
+  transaktionen Transaktion[]
 }
 
 model Kassen {
-  id             String         @id @unique @default(cuid())
-  name           String
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  filialeId      String
-  filiale        Filiale        @relation(fields: [filialeId], references: [id], onDelete: Restrict)
-  kassenLayoutId String
-  kassenLayout   KassenLayout[]
+  id                 String               @id @unique @default(cuid())
+  name               String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  filialeId          String               @unique
+  filiale            Filiale              @relation(fields: [filialeId], references: [id], onDelete: Restrict)
+  kassenLayoutId     String
+  kassenLayout       KassenLayout[]
+  artikeluntergruppe ArtikelUntergruppe[]
+  transaktionen      Transaktion[]
 }
 
 model KassenLayout {
@@ -105,15 +108,16 @@ model ArtikelHauptgruppe {
 }
 
 model ArtikelUntergruppe {
-  id            String             @id @unique @default(cuid())
-  name          String
-  beschreibung  String?
-  aktiv         Boolean            @default(true)
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
-  hauptgruppeId String
-  hauptgruppe   ArtikelHauptgruppe @relation(fields: [hauptgruppeId], references: [id], onDelete: Restrict)
-  artikel       Artikel[]
+  id                    String             @id @unique @default(cuid())
+  name                  String
+  beschreibung          String?
+  aktiv                 Boolean            @default(true)
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  hauptgruppeId         String
+  hauptgruppe           ArtikelHauptgruppe @relation(fields: [hauptgruppeId], references: [id], onDelete: Restrict)
+  artikel               Artikel[]
+  freigegebenFuerKassen Kassen[]
 }
 
 model Garantie {
@@ -142,25 +146,108 @@ model Artikel {
   artikelName     String
   beschreibung    String?
   verkaufspreis   Decimal            @db.Decimal(10, 2)
+  verkaufspreisExkl Boolean @default(false)
   einkaufspreis   Decimal            @db.Decimal(10, 2)
+  einkaufspreisExkl Boolean @default(false)
   gewinnProzent   Decimal            @db.Decimal(10, 2)
   mwst            MwStSatz
-  ean             String?            
+  ean             String?
   warnmeldung     String?
   mindestalter    Int?
   untergruppeId   String
   untergruppe     ArtikelUntergruppe @relation(fields: [untergruppeId], references: [id], onDelete: Restrict)
-  verkaufsEinheit VerkaufsEinheit
-  mengeProEinheit Decimal            @default(1) 
+  verkaufsEinheit VerkaufsEinheit    @default(STUECK)
+  mengeProEinheit Decimal            @default(1)
   status          Status             @default(AKTIV)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
   tags            String[]
   garantie        Garantie?          @relation(fields: [garantieId], references: [id], onDelete: Restrict)
   garantieId      String?
-  lager           Lager?            
+  lager           Lager?
+  transaktionsPositionen TransaktionsPosition[]
 
   @@index([ean])
   @@index([artikelName])
   @@index([status])
+}
+
+enum Zahlungsart {
+  BAR
+  KARTE
+  RECHNUNG
+  GUTSCHEIN
+  ANDERE
+}
+
+enum Waehrung {
+  CHF
+  EUR
+  USD
+}
+
+enum TransaktionsTyp {
+  VERKAUF
+  STORNO
+  RETOURE
+  GUTSCHRIFT
+  ABSCHREIBER
+}
+
+
+model Transaktion {
+  id                String                @id @unique @default(cuid())
+  typ              TransaktionsTyp        @default(VERKAUF)
+  datum            DateTime               @default(now())
+  kasseId          String
+  kasse            Kassen                 @relation(fields: [kasseId], references: [id], onDelete: Restrict)
+  filialeId        String
+  filiale          Filiale               @relation(fields: [filialeId], references: [id], onDelete: Restrict)
+  verkaeufer       String                /// Name des Verkäufers
+  bemerkung        String?
+  gruppenReferenz  String?               /// Referenz für zusammengehörige Transaktionen
+  positionen       TransaktionsPosition[]
+  zahlungen        TransaktionsZahlung[]
+  storniert        Boolean               @default(false)
+  stornoGrund      String?
+  stornoVon        String?               /// Referenz zur Original-Transaktion bei Storno
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  @@index([datum])
+  @@index([kasseId])
+}
+
+model TransaktionsPosition {
+  id              String      @id @unique @default(cuid())
+  transaktionId   String
+  transaktion     Transaktion @relation(fields: [transaktionId], references: [id], onDelete: Cascade)
+  artikelId       Int
+  artikel         Artikel     @relation(fields: [artikelId], references: [artikelID], onDelete: Restrict)
+  menge           Decimal     
+  einzelpreis     Decimal     
+  rabattProzent   Decimal     @default(0) 
+  rabattBetrag    Decimal     @default(0) 
+  mwstSatz        MwStSatz 
+  mwstBetrag      Decimal     
+  gesamtBetrag    Decimal     
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([transaktionId])
+  @@index([artikelId])
+}
+
+model TransaktionsZahlung {
+  id              String      @id @unique @default(cuid())
+  transaktionId   String
+  transaktion     Transaktion @relation(fields: [transaktionId], references: [id], onDelete: Cascade)
+  zahlungsart     Zahlungsart
+  waehrung        Waehrung    @default(CHF)
+  betrag          Decimal     @db.Decimal(10, 2)
+  kurs            Decimal     @default(1.00) @db.Decimal(10, 2)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([transaktionId])
 }
