@@ -69,9 +69,9 @@ model Filiale {
   logo      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String // Foreign key
-  user      User     @relation(fields: [userId], references: [id]) // Relation to User
-  kassen    Kassen[] // Relation to Kassen
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  kassen    Kassen[]
 }
 
 model Kassen {
@@ -80,7 +80,7 @@ model Kassen {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   filialeId      String
-  filiale        Filiale        @relation(fields: [filialeId], references: [id])
+  filiale        Filiale        @relation(fields: [filialeId], references: [id], onDelete: Restrict)
   kassenLayoutId String
   kassenLayout   KassenLayout[]
 }
@@ -89,7 +89,7 @@ model KassenLayout {
   id        String   @id @unique @default(cuid())
   name      String
   kassenId  String
-  kassen    Kassen   @relation(fields: [kassenId], references: [id])
+  kassen    Kassen   @relation(fields: [kassenId], references: [id], onDelete: Restrict)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -112,35 +112,55 @@ model ArtikelUntergruppe {
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
   hauptgruppeId String
-  hauptgruppe   ArtikelHauptgruppe @relation(fields: [hauptgruppeId], references: [id])
+  hauptgruppe   ArtikelHauptgruppe @relation(fields: [hauptgruppeId], references: [id], onDelete: Restrict)
   artikel       Artikel[]
+}
+
+model Garantie {
+  id           String    @id @unique @default(cuid())
+  tage         Int?
+  beschreibung String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  artikel      Artikel[]
+}
+
+model Lager {
+  id             String    @id @unique @default(cuid())
+  lagerbestand   Int       @default(0)
+  mindestbestand Int       @default(0)
+  letzterEinkauf DateTime?
+  letzterVerkauf DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  artikel        Artikel   @relation(fields: [artikelId], references: [artikelID], onDelete: Restrict)
+  artikelId      Int       @unique
 }
 
 model Artikel {
   artikelID       Int                @id @unique @default(autoincrement())
   artikelName     String
-  beschreibung    String? // Description
-  verkaufspreis   Decimal            @db.Decimal(10, 2) // Selling price
-  einkaufspreis   Decimal            @db.Decimal(10, 2) // Purchase price
-  gewinnProzent   Decimal            @db.Decimal(10, 2) // Profit margin in percent
-  mwst            MwStSatz // VAT/Tax rate as enum
+  beschreibung    String?
+  verkaufspreis   Decimal            @db.Decimal(10, 2)
+  einkaufspreis   Decimal            @db.Decimal(10, 2)
+  gewinnProzent   Decimal            @db.Decimal(10, 2)
+  mwst            MwStSatz
   ean             String?            
   warnmeldung     String?
   mindestalter    Int?
-  garantietage    Int?
   untergruppeId   String
-  untergruppe     ArtikelUntergruppe @relation(fields: [untergruppeId], references: [id])
+  untergruppe     ArtikelUntergruppe @relation(fields: [untergruppeId], references: [id], onDelete: Restrict)
   verkaufsEinheit VerkaufsEinheit
   mengeProEinheit Decimal            @default(1) 
   status          Status             @default(AKTIV)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
   tags            String[]
-  lagersystem     Boolean            @default(false)
-  lagerbestand    Int?
-  mindestbestand  Int?
-  letzterEinkauf  DateTime? // Date of last purchase
-  letzterVerkauf  DateTime? // Date of last sale
+  garantie        Garantie?          @relation(fields: [garantieId], references: [id], onDelete: Restrict)
+  garantieId      String?
+  lager           Lager?            
 
   @@index([ean])
+  @@index([artikelName])
+  @@index([status])
 }
