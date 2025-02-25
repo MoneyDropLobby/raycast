@@ -1,0 +1,52 @@
+enum Role {
+  ADMIN
+  MANAGER
+  USER
+}
+
+enum Status {
+  AKTIV
+  INAKTIV
+}
+
+enum MwStSatz {
+  NORMAL    @map("8.10") /// 8.1% Normalsatz
+  REDUZIERT @map("2.60") /// 2.6% Reduzierter Satz
+  SONDER    @map("3.80") /// 3.8% Sondersatz
+  OHNE      @map("0.00") /// 0% Befreit
+}
+
+enum VerkaufsEinheit {
+  STUECK
+  GRAMM
+  KILOGRAMM
+  LITER
+  MILLILITER
+  METER
+  ZENTIMETER
+  PACKUNG
+  KARTON
+  PALETTE
+}
+
+enum Zahlungsart {
+  BAR
+  KARTE
+  RECHNUNG
+  GUTSCHEIN
+  ANDERE
+}
+
+enum Waehrung {
+  CHF
+  EUR
+  USD
+}
+
+enum TransaktionsTyp {
+  VERKAUF
+  STORNO
+  RETOURE
+  GUTSCHRIFT
+  ABSCHREIBER
+}

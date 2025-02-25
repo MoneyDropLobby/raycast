@@ -17,6 +17,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { prisma } from "@/lib/prisma";
 
 export function NavMain({
   items,
