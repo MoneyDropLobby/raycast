@@ -124,12 +124,6 @@ model Artikel {
   lager                  Lager?
   transaktionsPositionen TransaktionsPosition[]
 
-  // Optional: Eindeutige Artikelnummer (SKU) falls benötigt
-  sku String? @unique
-
-  // Optional: Hersteller des Artikels
-  manufacturer String?
-
   @@index([ean])
   @@index([artikelName])
   @@index([status])
