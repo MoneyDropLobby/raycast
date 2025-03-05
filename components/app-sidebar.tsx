@@ -89,7 +89,7 @@ const data = {
       items: [
         {
           title: "Artikelverwaltung",
-          url: "#",
+          url: "/artikel/verwaltung",
         },
         {
           title: "Kategorien",
