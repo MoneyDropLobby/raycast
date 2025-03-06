@@ -1,32 +1,38 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArticlesTable } from "@/components/articles-table"
-import { ArticleDialog } from "@/components/article-dialog"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { useCategoryHierarchyStore } from "@/lib/stores/category-hierarchy-store"
-import type { Article } from "@/types"
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ArticlesTable } from "@/components/articles-table";
+import { ArticleDialog } from "@/components/article-dialog";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { useCategoryHierarchyStore } from "@/lib/stores/category-hierarchy-store";
+import { Article } from "@/types/index";
 
 export function ArticleManagement() {
-  const { categories, getCategoryFullPath } = useCategoryHierarchyStore()
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [currentArticle, setCurrentArticle] = useState<Article | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
+  const { categories, getCategoryFullPath } = useCategoryHierarchyStore();
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [currentArticle, setCurrentArticle] = useState<Article | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   const handleAddArticle = () => {
-    setIsAddDialogOpen(true)
-  }
+    setIsAddDialogOpen(true);
+  };
 
   const handleEditArticle = (article: Article) => {
-    setCurrentArticle(article)
-    setIsEditDialogOpen(true)
-  }
+    setCurrentArticle(article);
+    setIsEditDialogOpen(true);
+  };
 
   // Flatten categories for the dropdown
   const flattenedCategories = categories
@@ -35,7 +41,7 @@ export function ArticleManagement() {
       name: getCategoryFullPath(category.id),
       value: category.value,
     }))
-    .sort((a, b) => a.name.localeCompare(b.name))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <>
@@ -72,9 +78,17 @@ export function ArticleManagement() {
             </SelectContent>
           </Select>
         </div>
-        <ArticlesTable searchQuery={searchQuery} categoryFilter={categoryFilter} onEdit={handleEditArticle} />
+        <ArticlesTable
+          searchQuery={searchQuery}
+          categoryFilter={categoryFilter}
+          onEdit={handleEditArticle}
+        />
       </div>
-      <ArticleDialog mode="add" open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} />
+      <ArticleDialog
+        mode="add"
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+      />
       {currentArticle && (
         <ArticleDialog
           mode="edit"
@@ -84,6 +98,5 @@ export function ArticleManagement() {
         />
       )}
     </>
-  )
+  );
 }
-

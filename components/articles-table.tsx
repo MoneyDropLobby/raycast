@@ -1,11 +1,22 @@
-"use client"
+"use client";
 
-import { TableHeader } from "@/components/ui/table"
+import { TableHeader } from "@/components/ui/table";
 
-import { useState } from "react"
-import { Edit, MoreHorizontal, Trash2, ArrowUpDown } from "lucide-react"
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useState } from "react";
+import { Edit, MoreHorizontal, Trash2, ArrowUpDown } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,9 +26,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Pagination,
   PaginationContent,
@@ -25,117 +36,114 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination"
-import { formatCurrency } from "@/lib/utils"
-import { mockArticles } from "@/lib/mock-data"
-
-interface Article {
-  id: string
-  name: string
-  sku: string
-  barcode: string
-  imageUrl: string | null
-  category: string
-  price: number
-  stock: number
-  barcodes: { code: string; isMain: boolean }[]
-}
+} from "@/components/ui/pagination";
+import { formatCurrency } from "@/lib/utils";
+import { mockArticles } from "@/lib/mock-data";
+import { Article } from "@/types";
 
 interface ArticlesTableProps {
-  searchQuery: string
-  categoryFilter: string
-  onEdit: (article: Article) => void
+  searchQuery: string;
+  categoryFilter: string;
+  onEdit: (article: Article) => void;
 }
 
-export function ArticlesTable({ searchQuery, categoryFilter, onEdit }: ArticlesTableProps) {
-  const [articles, setArticles] = useState<Article[]>(mockArticles)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [sortColumn, setSortColumn] = useState<string | null>(null)
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [articleToDelete, setArticleToDelete] = useState<Article | null>(null)
+export function ArticlesTable({
+  searchQuery,
+  categoryFilter,
+  onEdit,
+}: ArticlesTableProps) {
+  const [articles, setArticles] = useState<Article[]>(mockArticles);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState<Article | null>(null);
 
-  const itemsPerPage = 10
+  const itemsPerPage = 10;
 
   // Filter articles based on search query and category
   const filteredArticles = articles.filter((article) => {
     // Suche auch in Barcodes
-    const mainBarcode = article.barcodes.find((b) => b.isMain)?.code || ""
-    const allBarcodes = article.barcodes.map((b) => b.code).join(" ")
+    const mainBarcode = article.barcodes.find((b) => b.isMain)?.code || "";
+    const allBarcodes = article.barcodes.map((b) => b.code).join(" ");
 
     const matchesSearch =
       article.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       article.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
       mainBarcode.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      allBarcodes.toLowerCase().includes(searchQuery.toLowerCase())
+      allBarcodes.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesCategory = categoryFilter === "all" || article.category === categoryFilter
+    const matchesCategory =
+      categoryFilter === "all" || article.category === categoryFilter;
 
-    return matchesSearch && matchesCategory
-  })
+    return matchesSearch && matchesCategory;
+  });
 
   // Sort articles
   const sortedArticles = [...filteredArticles].sort((a, b) => {
-    if (!sortColumn) return 0
+    if (!sortColumn) return 0;
 
-    let valueA, valueB
+    let valueA, valueB;
 
     switch (sortColumn) {
       case "name":
-        valueA = a.name
-        valueB = b.name
-        break
+        valueA = a.name;
+        valueB = b.name;
+        break;
       case "sku":
-        valueA = a.sku
-        valueB = b.sku
-        break
+        valueA = a.sku;
+        valueB = b.sku;
+        break;
       case "barcode":
-        valueA = a.barcodes.find((b) => b.isMain)?.code || ""
-        valueB = b.barcodes.find((b) => b.isMain)?.code || ""
-        break
+        valueA = a.barcodes.find((b) => b.isMain)?.code || "";
+        valueB = b.barcodes.find((b) => b.isMain)?.code || "";
+        break;
       case "price":
-        valueA = a.price
-        valueB = b.price
-        break
+        valueA = a.price;
+        valueB = b.price;
+        break;
       case "stock":
-        valueA = a.stock
-        valueB = b.stock
-        break
+        valueA = a.stock;
+        valueB = b.stock;
+        break;
       default:
-        return 0
+        return 0;
     }
 
-    if (valueA < valueB) return sortDirection === "asc" ? -1 : 1
-    if (valueA > valueB) return sortDirection === "asc" ? 1 : -1
-    return 0
-  })
+    if (valueA < valueB) return sortDirection === "asc" ? -1 : 1;
+    if (valueA > valueB) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
 
   // Paginate articles
-  const totalPages = Math.ceil(sortedArticles.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedArticles = sortedArticles.slice(startIndex, startIndex + itemsPerPage)
+  const totalPages = Math.ceil(sortedArticles.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedArticles = sortedArticles.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   const handleSort = (column: string) => {
     if (sortColumn === column) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
-      setSortColumn(column)
-      setSortDirection("asc")
+      setSortColumn(column);
+      setSortDirection("asc");
     }
-  }
+  };
 
   const handleDelete = (article: Article) => {
-    setArticleToDelete(article)
-    setDeleteDialogOpen(true)
-  }
+    setArticleToDelete(article);
+    setDeleteDialogOpen(true);
+  };
 
   const confirmDelete = () => {
     if (articleToDelete) {
-      setArticles(articles.filter((a) => a.id !== articleToDelete.id))
-      setDeleteDialogOpen(false)
-      setArticleToDelete(null)
+      setArticles(articles.filter((a) => a.id !== articleToDelete.id));
+      setDeleteDialogOpen(false);
+      setArticleToDelete(null);
     }
-  }
+  };
 
   return (
     <div className="space-y-4">
@@ -145,32 +153,52 @@ export function ArticlesTable({ searchQuery, categoryFilter, onEdit }: ArticlesT
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>
-                <Button variant="ghost" onClick={() => handleSort("name")} className="flex items-center">
+                <Button
+                  variant="ghost"
+                  onClick={() => handleSort("name")}
+                  className="flex items-center"
+                >
                   Name
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
               </TableHead>
               <TableHead>
-                <Button variant="ghost" onClick={() => handleSort("sku")} className="flex items-center">
+                <Button
+                  variant="ghost"
+                  onClick={() => handleSort("sku")}
+                  className="flex items-center"
+                >
                   Artikelnummer
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
               </TableHead>
               <TableHead>
-                <Button variant="ghost" onClick={() => handleSort("barcode")} className="flex items-center">
+                <Button
+                  variant="ghost"
+                  onClick={() => handleSort("barcode")}
+                  className="flex items-center"
+                >
                   Hauptbarcode
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
               </TableHead>
               <TableHead>Kategorie</TableHead>
               <TableHead>
-                <Button variant="ghost" onClick={() => handleSort("price")} className="flex items-center">
+                <Button
+                  variant="ghost"
+                  onClick={() => handleSort("price")}
+                  className="flex items-center"
+                >
                   Preis
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
               </TableHead>
               <TableHead>
-                <Button variant="ghost" onClick={() => handleSort("stock")} className="flex items-center">
+                <Button
+                  variant="ghost"
+                  onClick={() => handleSort("stock")}
+                  className="flex items-center"
+                >
                   Bestand
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
@@ -201,7 +229,13 @@ export function ArticlesTable({ searchQuery, categoryFilter, onEdit }: ArticlesT
                   <TableCell>{formatCurrency(article.price)}</TableCell>
                   <TableCell>
                     <Badge
-                      variant={article.stock > 10 ? "success" : article.stock > 0 ? "warning" : "destructive"}
+                      variant={
+                        article.stock > 10
+                          ? "default"
+                          : article.stock > 0
+                          ? "secondary"
+                          : "destructive"
+                      }
                       className="font-medium"
                     >
                       {article.stock}
@@ -249,20 +283,31 @@ export function ArticlesTable({ searchQuery, categoryFilter, onEdit }: ArticlesT
             <PaginationItem>
               <PaginationPrevious
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                className={
+                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                }
               />
             </PaginationItem>
             {Array.from({ length: totalPages }).map((_, i) => (
               <PaginationItem key={i}>
-                <PaginationLink onClick={() => setCurrentPage(i + 1)} isActive={currentPage === i + 1}>
+                <PaginationLink
+                  onClick={() => setCurrentPage(i + 1)}
+                  isActive={currentPage === i + 1}
+                >
                   {i + 1}
                 </PaginationLink>
               </PaginationItem>
             ))}
             <PaginationItem>
               <PaginationNext
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                className={
+                  currentPage === totalPages
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
               />
             </PaginationItem>
           </PaginationContent>
@@ -274,8 +319,9 @@ export function ArticlesTable({ searchQuery, categoryFilter, onEdit }: ArticlesT
           <AlertDialogHeader>
             <AlertDialogTitle>Sind Sie sicher?</AlertDialogTitle>
             <AlertDialogDescription>
-              Dies wird den Artikel &quot;{articleToDelete?.name}&quot; dauerhaft löschen. Diese Aktion kann nicht
-              rückgängig gemacht werden.
+              Dies wird den Artikel &quot;{articleToDelete?.name}&quot;
+              dauerhaft löschen. Diese Aktion kann nicht rückgängig gemacht
+              werden.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -290,6 +336,5 @@ export function ArticlesTable({ searchQuery, categoryFilter, onEdit }: ArticlesT
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }
-
