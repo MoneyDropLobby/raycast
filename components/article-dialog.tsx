@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { useState, useEffect } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
   DialogContent,
@@ -11,21 +11,41 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { mockArticles, type Article, type Barcode } from "@/lib/mock-data"
-import { useCategoryHierarchyStore } from "@/lib/stores/category-hierarchy-store"
-import { BarcodeManager } from "@/components/barcode-manager"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { mockArticles, type Article, type Barcode } from "@/lib/mock-data";
+import { useCategoryHierarchyStore } from "@/lib/stores/category-hierarchy-store";
+import { BarcodeManager } from "@/components/barcode-manager";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const articleSchema = z.object({
-  name: z.string().min(2, { message: "Name muss mindestens 2 Zeichen lang sein" }),
-  sku: z.string().min(3, { message: "Artikelnummer muss mindestens 3 Zeichen lang sein" }),
-  category: z.string().min(1, { message: "Bitte wählen Sie eine Kategorie aus" }),
+  name: z
+    .string()
+    .min(2, { message: "Name muss mindestens 2 Zeichen lang sein" }),
+  sku: z
+    .string()
+    .min(3, { message: "Artikelnummer muss mindestens 3 Zeichen lang sein" }),
+  category: z
+    .string()
+    .min(1, { message: "Bitte wählen Sie eine Kategorie aus" }),
   price: z.coerce.number().positive({ message: "Preis muss positiv sein" }),
   cost: z.coerce.number().positive({ message: "Kosten müssen positiv sein" }),
   stock: z.coerce
@@ -34,21 +54,26 @@ const articleSchema = z.object({
     .nonnegative({ message: "Bestand kann nicht negativ sein" }),
   imageUrl: z.string().optional(),
   description: z.string().optional(),
-})
+});
 
-type ArticleFormValues = z.infer<typeof articleSchema>
+type ArticleFormValues = z.infer<typeof articleSchema>;
 
 interface ArticleDialogProps {
-  mode: "add" | "edit"
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  article?: Article
+  mode: "add" | "edit";
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  article?: Article;
 }
 
-export function ArticleDialog({ mode, open, onOpenChange, article }: ArticleDialogProps) {
-  const { categories, getCategoryFullPath } = useCategoryHierarchyStore()
-  const [articles, setArticles] = useState<Article[]>(mockArticles)
-  const [barcodes, setBarcodes] = useState<Barcode[]>([])
+export function ArticleDialog({
+  mode,
+  open,
+  onOpenChange,
+  article,
+}: ArticleDialogProps) {
+  const { categories, getCategoryFullPath } = useCategoryHierarchyStore();
+  const [articles, setArticles] = useState<Article[]>(mockArticles);
+  const [barcodes, setBarcodes] = useState<Barcode[]>([]);
 
   const form = useForm<ArticleFormValues>({
     resolver: zodResolver(articleSchema),
@@ -62,7 +87,7 @@ export function ArticleDialog({ mode, open, onOpenChange, article }: ArticleDial
       imageUrl: "",
       description: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (mode === "edit" && article) {
@@ -75,8 +100,8 @@ export function ArticleDialog({ mode, open, onOpenChange, article }: ArticleDial
         stock: article.stock,
         imageUrl: article.imageUrl || "",
         description: article.description || "",
-      })
-      setBarcodes(article.barcodes || [])
+      });
+      setBarcodes(article.barcodes || []);
     } else if (mode === "add") {
       form.reset({
         name: "",
@@ -87,25 +112,25 @@ export function ArticleDialog({ mode, open, onOpenChange, article }: ArticleDial
         stock: 0,
         imageUrl: "",
         description: "",
-      })
-      setBarcodes([])
+      });
+      setBarcodes([]);
     }
-  }, [mode, article, form])
+  }, [mode, article, form]);
 
-  const onSubmit = (data: ArticleFormValues) => {
-    if (mode === "add") {
-      const newArticle: Article = {
-        id: Math.random().toString(36).substring(2, 9),
-        ...data,
-        barcodes: barcodes,
-      }
-      setArticles([...articles, newArticle])
-    } else if (mode === "edit" && article) {
-      setArticles(articles.map((a) => (a.id === article.id ? { ...a, ...data, barcodes: barcodes } : a)))
-    }
+  // const onSubmit = (data: ArticleFormValues) => {
+  //   if (mode === "add") {
+  //     const newArticle: Article = {
+  //       id: Math.random().toString(36).substring(2, 9),
+  //       ...data,
+  //       barcodes: barcodes,
+  //     }
+  //     setArticles([...articles, newArticle])
+  //   } else if (mode === "edit" && article) {
+  //     setArticles(articles.map((a) => (a.id === article.id ? { ...a, ...data, barcodes: barcodes } : a)))
+  //   }
 
-    onOpenChange(false)
-  }
+  //   onOpenChange(false)
+  // }
 
   // Flatten categories for the dropdown
   const flattenedCategories = categories
@@ -114,13 +139,15 @@ export function ArticleDialog({ mode, open, onOpenChange, article }: ArticleDial
       name: getCategoryFullPath(category.id),
       value: category.value,
     }))
-    .sort((a, b) => a.name.localeCompare(b.name))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{mode === "add" ? "Neuen Artikel hinzufügen" : "Artikel bearbeiten"}</DialogTitle>
+          <DialogTitle>
+            {mode === "add" ? "Neuen Artikel hinzufügen" : "Artikel bearbeiten"}
+          </DialogTitle>
           <DialogDescription>
             {mode === "add"
               ? "Fügen Sie einen neuen Artikel zu Ihrem Bestand hinzu. Füllen Sie alle erforderlichen Felder aus."
@@ -169,7 +196,10 @@ export function ArticleDialog({ mode, open, onOpenChange, article }: ArticleDial
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategorie</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Kategorie auswählen" />
@@ -177,7 +207,10 @@ export function ArticleDialog({ mode, open, onOpenChange, article }: ArticleDial
                         </FormControl>
                         <SelectContent>
                           {flattenedCategories.map((category) => (
-                            <SelectItem key={category.id} value={category.value}>
+                            <SelectItem
+                              key={category.id}
+                              value={category.value}
+                            >
                               {category.name}
                             </SelectItem>
                           ))}
@@ -237,9 +270,14 @@ export function ArticleDialog({ mode, open, onOpenChange, article }: ArticleDial
                   <FormItem>
                     <FormLabel>Bild-URL</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://beispiel.de/bild.jpg" {...field} />
+                      <Input
+                        placeholder="https://beispiel.de/bild.jpg"
+                        {...field}
+                      />
                     </FormControl>
-                    <FormDescription>Leer lassen, um ein Platzhalterbild zu verwenden</FormDescription>
+                    <FormDescription>
+                      Leer lassen, um ein Platzhalterbild zu verwenden
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -251,7 +289,11 @@ export function ArticleDialog({ mode, open, onOpenChange, article }: ArticleDial
                   <FormItem>
                     <FormLabel>Beschreibung</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Artikelbeschreibung eingeben" className="min-h-[100px]" {...field} />
+                      <Textarea
+                        placeholder="Artikelbeschreibung eingeben"
+                        className="min-h-[100px]"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -260,18 +302,27 @@ export function ArticleDialog({ mode, open, onOpenChange, article }: ArticleDial
             </TabsContent>
 
             <TabsContent value="barcodes">
-              <BarcodeManager barcodes={barcodes} onBarcodesChange={setBarcodes} articleId={article?.id || "new"} />
+              <BarcodeManager
+                barcodes={barcodes}
+                onBarcodesChange={setBarcodes}
+                articleId={article?.id || "new"}
+              />
             </TabsContent>
           </Tabs>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Abbrechen
             </Button>
-            <Button type="submit">{mode === "add" ? "Artikel hinzufügen" : "Änderungen speichern"}</Button>
+            <Button type="submit">
+              {mode === "add" ? "Artikel hinzufügen" : "Änderungen speichern"}
+            </Button>
           </DialogFooter>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import React from "react"
-import { useState, useEffect } from "react"
+import React from "react";
+import { useState, useEffect } from "react";
 import {
   Plus,
   Edit,
@@ -13,10 +13,17 @@ import {
   ArrowLeft,
   ArrowUpDown,
   GripVertical,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -24,9 +31,22 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,21 +56,21 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { Badge } from "@/components/ui/badge"
-import { DashboardHeader } from "@/components/dashboard-header"
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { DashboardHeader } from "@/components/dashboard-header";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useCategoryHierarchyStore } from "@/lib/stores/category-hierarchy-store"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/breadcrumb";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useCategoryHierarchyStore } from "@/lib/stores/category-hierarchy-store";
+import { cn } from "@/lib/utils";
 import {
   DndContext,
   closestCenter,
@@ -59,39 +79,42 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
-} from "@dnd-kit/core"
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
-} from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface HierarchicalCategory {
-  id: string
-  name: string
-  value: string
-  description?: string
-  color?: string
-  parentId?: string | null
-  sortOrder?: number
+  id: string;
+  name: string;
+  value: string;
+  description?: string;
+  color?: string;
+  parentId?: string | null;
+  sortOrder?: number;
 }
 
 const categorySchema = z.object({
-  name: z.string().min(2, { message: "Name muss mindestens 2 Zeichen lang sein" }),
+  name: z
+    .string()
+    .min(2, { message: "Name muss mindestens 2 Zeichen lang sein" }),
   value: z
     .string()
     .min(2, { message: "Wert muss mindestens 2 Zeichen lang sein" })
     .regex(/^[a-z0-9-]+$/, {
-      message: "Wert darf nur Kleinbuchstaben, Zahlen und Bindestriche enthalten",
+      message:
+        "Wert darf nur Kleinbuchstaben, Zahlen und Bindestriche enthalten",
     }),
   description: z.string().optional(),
   color: z.string().optional(),
-})
+});
 
-type CategoryFormValues = z.infer<typeof categorySchema>
+type CategoryFormValues = z.infer<typeof categorySchema>;
 
 // Sortable table row component
 function SortableTableRow({
@@ -106,28 +129,39 @@ function SortableTableRow({
   handleDeleteCategory,
   handleAddSubcategory,
 }: {
-  category: HierarchicalCategory
-  hasChildren: (id: string) => boolean
-  expandedCategories: Record<string, boolean>
-  toggleExpand: (id: string) => void
-  navigateToCategory: (id: string) => void
-  getCategoryChildren: (id: string) => HierarchicalCategory[]
-  searchQuery: string
-  handleEditCategory: (category: HierarchicalCategory) => void
-  handleDeleteCategory: (category: HierarchicalCategory) => void
-  handleAddSubcategory: (category: HierarchicalCategory) => void
+  category: HierarchicalCategory;
+  hasChildren: (id: string) => boolean;
+  expandedCategories: Record<string, boolean>;
+  toggleExpand: (id: string) => void;
+  navigateToCategory: (id: string) => void;
+  getCategoryChildren: (id: string) => HierarchicalCategory[];
+  searchQuery: string;
+  handleEditCategory: (category: HierarchicalCategory) => void;
+  handleDeleteCategory: (category: HierarchicalCategory) => void;
+  handleAddSubcategory: (category: HierarchicalCategory) => void;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: category.id })
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: category.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
     zIndex: isDragging ? 1 : 0,
-  }
+  };
 
   return (
-    <TableRow ref={setNodeRef} style={style} className={isDragging ? "bg-accent/30" : ""}>
+    <TableRow
+      ref={setNodeRef}
+      style={style}
+      className={isDragging ? "bg-accent/30" : ""}
+    >
       <TableCell>
         <div className="flex items-center">
           <button
@@ -140,7 +174,12 @@ function SortableTableRow({
           </button>
 
           {hasChildren(category.id) && !searchQuery ? (
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 mr-2" onClick={() => toggleExpand(category.id)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 mr-2"
+              onClick={() => toggleExpand(category.id)}
+            >
               {expandedCategories[category.id] ? (
                 <ChevronDown className="h-4 w-4" />
               ) : (
@@ -152,7 +191,10 @@ function SortableTableRow({
           ) : (
             <div className="w-8 mr-2" />
           )}
-          <span className="font-medium cursor-pointer hover:underline" onClick={() => navigateToCategory(category.id)}>
+          <span
+            className="font-medium cursor-pointer hover:underline"
+            onClick={() => navigateToCategory(category.id)}
+          >
             {category.name}
           </span>
         </div>
@@ -162,7 +204,10 @@ function SortableTableRow({
           <div className="mt-2 ml-8 pl-2 border-l-2 border-gray-200">
             {getCategoryChildren(category.id).map((subCategory) => (
               <div key={subCategory.id} className="py-1 flex items-center">
-                <span className="cursor-pointer hover:underline" onClick={() => navigateToCategory(subCategory.id)}>
+                <span
+                  className="cursor-pointer hover:underline"
+                  onClick={() => navigateToCategory(subCategory.id)}
+                >
                   {subCategory.name}
                 </span>
               </div>
@@ -173,10 +218,15 @@ function SortableTableRow({
       <TableCell>
         <Badge variant="outline">{category.value}</Badge>
       </TableCell>
-      <TableCell className="max-w-[200px] truncate">{category.description}</TableCell>
+      <TableCell className="max-w-[200px] truncate">
+        {category.description}
+      </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: category.color || "#000000" }} />
+          <div
+            className="w-4 h-4 rounded-full"
+            style={{ backgroundColor: category.color || "#000000" }}
+          />
           {category.color || "#000000"}
         </div>
       </TableCell>
@@ -208,7 +258,7 @@ function SortableTableRow({
         </DropdownMenu>
       </TableCell>
     </TableRow>
-  )
+  );
 }
 
 export function CategoryManagement() {
@@ -220,19 +270,25 @@ export function CategoryManagement() {
     getCategoryPath,
     getCategoryChildren,
     reorderCategories,
-  } = useCategoryHierarchyStore()
+  } = useCategoryHierarchyStore();
 
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [currentCategory, setCurrentCategory] = useState<HierarchicalCategory | null>(null)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [categoryToDelete, setCategoryToDelete] = useState<HierarchicalCategory | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [currentParentId, setCurrentParentId] = useState<string | null>(null)
-  const [breadcrumbPath, setBreadcrumbPath] = useState<HierarchicalCategory[]>([])
-  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({})
-  const [sortColumn, setSortColumn] = useState<string | null>(null)
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [currentCategory, setCurrentCategory] =
+    useState<HierarchicalCategory | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] =
+    useState<HierarchicalCategory | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentParentId, setCurrentParentId] = useState<string | null>(null);
+  const [breadcrumbPath, setBreadcrumbPath] = useState<HierarchicalCategory[]>(
+    []
+  );
+  const [expandedCategories, setExpandedCategories] = useState<
+    Record<string, boolean>
+  >({});
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   // Setup sensors for drag and drop
   const sensors = useSensors(
@@ -243,70 +299,70 @@ export function CategoryManagement() {
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  )
+    })
+  );
 
   // Get current level categories
   const currentCategories = currentParentId
     ? getCategoryChildren(currentParentId)
-    : categories.filter((c) => !c.parentId)
+    : categories.filter((c) => !c.parentId);
 
   // Filter categories based on search
   const filteredCategories = searchQuery
     ? categories.filter(
         (category) =>
           category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          category.value.toLowerCase().includes(searchQuery.toLowerCase()),
+          category.value.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : currentCategories
+    : currentCategories;
 
   // Sort categories
   const sortedCategories = [...filteredCategories].sort((a, b) => {
     // If a column is selected for sorting, prioritize that over custom order
     if (sortColumn) {
-      let valueA, valueB
+      let valueA, valueB;
 
       switch (sortColumn) {
         case "name":
-          valueA = a.name
-          valueB = b.name
-          break
+          valueA = a.name;
+          valueB = b.name;
+          break;
         case "value":
-          valueA = a.value
-          valueB = b.value
-          break
+          valueA = a.value;
+          valueB = b.value;
+          break;
         case "description":
-          valueA = a.description || ""
-          valueB = b.description || ""
-          break
+          valueA = a.description || "";
+          valueB = b.description || "";
+          break;
         case "color":
-          valueA = a.color || ""
-          valueB = b.color || ""
-          break
+          valueA = a.color || "";
+          valueB = b.color || "";
+          break;
         default:
           // Fall back to sortOrder if no valid column
           if (a.sortOrder !== undefined && b.sortOrder !== undefined) {
-            return a.sortOrder - b.sortOrder
+            return a.sortOrder - b.sortOrder;
           }
-          return 0
+          return 0;
       }
 
-      if (valueA < valueB) return sortDirection === "asc" ? -1 : 1
-      if (valueA > valueB) return sortDirection === "asc" ? 1 : -1
+      if (valueA < valueB) return sortDirection === "asc" ? -1 : 1;
+      if (valueA > valueB) return sortDirection === "asc" ? 1 : -1;
 
       // If values are equal, use sortOrder as secondary sort
       if (a.sortOrder !== undefined && b.sortOrder !== undefined) {
-        return a.sortOrder - b.sortOrder
+        return a.sortOrder - b.sortOrder;
       }
     }
     // If no column is selected for sorting, use custom order
     else if (a.sortOrder !== undefined && b.sortOrder !== undefined) {
-      return a.sortOrder - b.sortOrder
+      return a.sortOrder - b.sortOrder;
     }
 
     // Default to sorting by name if nothing else applies
-    return a.name.localeCompare(b.name)
-  })
+    return a.name.localeCompare(b.name);
+  });
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
@@ -316,7 +372,7 @@ export function CategoryManagement() {
       description: "",
       color: "#000000",
     },
-  })
+  });
 
   const editForm = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
@@ -326,25 +382,25 @@ export function CategoryManagement() {
       description: "",
       color: "#000000",
     },
-  })
+  });
 
   // Update breadcrumb path when parent changes
   useEffect(() => {
     if (currentParentId) {
-      setBreadcrumbPath(getCategoryPath(currentParentId))
+      setBreadcrumbPath(getCategoryPath(currentParentId));
     } else {
-      setBreadcrumbPath([])
+      setBreadcrumbPath([]);
     }
-  }, [currentParentId, getCategoryPath])
+  }, [currentParentId, getCategoryPath]);
 
   const handleSort = (column: string) => {
     if (sortColumn === column) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
-      setSortColumn(column)
-      setSortDirection("asc")
+      setSortColumn(column);
+      setSortDirection("asc");
     }
-  }
+  };
 
   const handleAddCategory = () => {
     form.reset({
@@ -352,51 +408,54 @@ export function CategoryManagement() {
       value: "",
       description: "",
       color: "#000000",
-    })
-    setIsAddDialogOpen(true)
-  }
+    });
+    setIsAddDialogOpen(true);
+  };
 
   const handleAddSubcategory = (parentCategory: HierarchicalCategory) => {
-    setCurrentParentId(parentCategory.id)
+    setCurrentParentId(parentCategory.id);
     form.reset({
       name: "",
       value: "",
       description: "",
       color: parentCategory.color || "#000000",
-    })
-    setIsAddDialogOpen(true)
-  }
+    });
+    setIsAddDialogOpen(true);
+  };
 
   const handleEditCategory = (category: HierarchicalCategory) => {
-    setCurrentCategory(category)
+    setCurrentCategory(category);
     editForm.reset({
       name: category.name,
       value: category.value,
       description: category.description || "",
       color: category.color || "#000000",
-    })
-    setIsEditDialogOpen(true)
-  }
+    });
+    setIsEditDialogOpen(true);
+  };
 
   const handleDeleteCategory = (category: HierarchicalCategory) => {
-    setCategoryToDelete(category)
-    setDeleteDialogOpen(true)
-  }
+    setCategoryToDelete(category);
+    setDeleteDialogOpen(true);
+  };
 
   const confirmDelete = () => {
     if (categoryToDelete) {
-      removeCategory(categoryToDelete.id)
-      setDeleteDialogOpen(false)
-      setCategoryToDelete(null)
+      removeCategory(categoryToDelete.id);
+      setDeleteDialogOpen(false);
+      setCategoryToDelete(null);
     }
-  }
+  };
 
   const onAddSubmit = (data: CategoryFormValues) => {
     // Get max sort order for the current level
     const maxSortOrder = currentCategories.reduce(
-      (max, cat) => (cat.sortOrder !== undefined && cat.sortOrder > max ? cat.sortOrder : max),
-      -1,
-    )
+      (max, cat) =>
+        cat.sortOrder !== undefined && cat.sortOrder > max
+          ? cat.sortOrder
+          : max,
+      -1
+    );
 
     addCategory({
       id: Math.random().toString(36).substring(2, 9),
@@ -406,9 +465,9 @@ export function CategoryManagement() {
       color: data.color,
       parentId: currentParentId,
       sortOrder: maxSortOrder + 1, // Add to the end
-    })
-    setIsAddDialogOpen(false)
-  }
+    });
+    setIsAddDialogOpen(false);
+  };
 
   const onEditSubmit = (data: CategoryFormValues) => {
     if (currentCategory) {
@@ -418,68 +477,70 @@ export function CategoryManagement() {
         value: data.value,
         description: data.description,
         color: data.color,
-      })
-      setIsEditDialogOpen(false)
-      setCurrentCategory(null)
+      });
+      setIsEditDialogOpen(false);
+      setCurrentCategory(null);
     }
-  }
+  };
 
   const navigateToCategory = (categoryId: string) => {
-    setCurrentParentId(categoryId)
-    setSearchQuery("")
-  }
+    setCurrentParentId(categoryId);
+    setSearchQuery("");
+  };
 
   const navigateUp = () => {
     if (breadcrumbPath.length > 0) {
-      const parentCategory = breadcrumbPath[breadcrumbPath.length - 2]
-      setCurrentParentId(parentCategory?.id || null)
+      const parentCategory = breadcrumbPath[breadcrumbPath.length - 2];
+      setCurrentParentId(parentCategory?.id || null);
     } else {
-      setCurrentParentId(null)
+      setCurrentParentId(null);
     }
-    setSearchQuery("")
-  }
+    setSearchQuery("");
+  };
 
   const toggleExpand = (categoryId: string) => {
     setExpandedCategories((prev) => ({
       ...prev,
       [categoryId]: !prev[categoryId],
-    }))
-  }
+    }));
+  };
 
   const hasChildren = (categoryId: string) => {
-    return categories.some((c) => c.parentId === categoryId)
-  }
+    return categories.some((c) => c.parentId === categoryId);
+  };
 
   // Handle drag end event
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
+    const { active, over } = event;
 
     if (over && active.id !== over.id) {
       // Find the indices of the dragged item and the drop target
-      const activeIndex = sortedCategories.findIndex((cat) => cat.id === active.id)
-      const overIndex = sortedCategories.findIndex((cat) => cat.id === over.id)
+      const activeIndex = sortedCategories.findIndex(
+        (cat) => cat.id === active.id
+      );
+      const overIndex = sortedCategories.findIndex((cat) => cat.id === over.id);
 
       if (activeIndex !== -1 && overIndex !== -1) {
         // Create a new array with the items in the new order
-        const newOrder = arrayMove(sortedCategories, activeIndex, overIndex)
+        const newOrder = arrayMove(sortedCategories, activeIndex, overIndex);
 
         // Update the sortOrder of each item
         const updatedCategories = newOrder.map((cat, index) => ({
           ...cat,
           sortOrder: index,
-        }))
+        }));
 
         // Update the store with the new order
-        reorderCategories(updatedCategories)
+        reorderCategories(updatedCategories);
 
         // Reset column sorting when manually reordering
         if (sortColumn) {
-          setSortColumn(null)
-          setSortDirection("asc")
+          setSortColumn(null);
+          setSortDirection("asc");
         }
       }
     }
-  }
+  };
 
   return (
     <>
@@ -497,7 +558,12 @@ export function CategoryManagement() {
         {/* Breadcrumb navigation */}
         <div className="flex items-center space-x-2">
           {currentParentId && (
-            <Button variant="outline" size="sm" className="mr-2" onClick={navigateUp}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mr-2"
+              onClick={navigateUp}
+            >
               <ArrowLeft className="h-4 w-4 mr-1" />
               Zurück
             </Button>
@@ -509,8 +575,8 @@ export function CategoryManagement() {
                 <BreadcrumbLink
                   href="#"
                   onClick={(e) => {
-                    e.preventDefault()
-                    setCurrentParentId(null)
+                    e.preventDefault();
+                    setCurrentParentId(null);
                   }}
                   className={cn(currentParentId === null ? "font-bold" : "")}
                 >
@@ -518,17 +584,20 @@ export function CategoryManagement() {
                 </BreadcrumbLink>
               </BreadcrumbItem>
 
-              {breadcrumbPath.map((category, index) => (
+              {breadcrumbPath.map((category) => (
                 <React.Fragment key={category.id}>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
                     <BreadcrumbLink
                       href="#"
                       onClick={(e) => {
-                        e.preventDefault()
-                        navigateToCategory(category.id)
+                        e.preventDefault();
+                        navigateToCategory(category.id);
                       }}
-                      className={cn(currentParentId === category.id ? "font-bold" : "", "max-w-[150px] truncate")}
+                      className={cn(
+                        currentParentId === category.id ? "font-bold" : "",
+                        "max-w-[150px] truncate"
+                      )}
                     >
                       {category.name}
                     </BreadcrumbLink>
@@ -559,10 +628,10 @@ export function CategoryManagement() {
                   {sortColumn === "name"
                     ? "Name"
                     : sortColumn === "value"
-                      ? "Wert"
-                      : sortColumn === "description"
-                        ? "Beschreibung"
-                        : "Farbe"}
+                    ? "Wert"
+                    : sortColumn === "description"
+                    ? "Beschreibung"
+                    : "Farbe"}
                 </span>{" "}
                 ({sortDirection === "asc" ? "aufsteigend" : "absteigend"})
               </span>
@@ -571,8 +640,8 @@ export function CategoryManagement() {
                 size="sm"
                 className="ml-2 h-8 px-2"
                 onClick={() => {
-                  setSortColumn(null)
-                  setSortDirection("asc")
+                  setSortColumn(null);
+                  setSortDirection("asc");
                 }}
               >
                 Zurücksetzen
@@ -582,8 +651,15 @@ export function CategoryManagement() {
         </div>
 
         {/* Categories table */}
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={sortedCategories.map((cat) => cat.id)} strategy={verticalListSortingStrategy}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={sortedCategories.map((cat) => cat.id)}
+            strategy={verticalListSortingStrategy}
+          >
             <div className="rounded-md border">
               <Table>
                 <TableHeader>
@@ -592,14 +668,19 @@ export function CategoryManagement() {
                       <Button
                         variant="ghost"
                         onClick={() => handleSort("name")}
-                        className={cn("flex items-center", sortColumn === "name" && "font-bold")}
+                        className={cn(
+                          "flex items-center",
+                          sortColumn === "name" && "font-bold"
+                        )}
                       >
                         Name
                         <ArrowUpDown
                           className={cn(
                             "ml-2 h-4 w-4",
                             sortColumn === "name" &&
-                              (sortDirection === "asc" ? "text-primary" : "text-primary rotate-180"),
+                              (sortDirection === "asc"
+                                ? "text-primary"
+                                : "text-primary rotate-180")
                           )}
                         />
                       </Button>
@@ -608,14 +689,19 @@ export function CategoryManagement() {
                       <Button
                         variant="ghost"
                         onClick={() => handleSort("value")}
-                        className={cn("flex items-center", sortColumn === "value" && "font-bold")}
+                        className={cn(
+                          "flex items-center",
+                          sortColumn === "value" && "font-bold"
+                        )}
                       >
                         Wert
                         <ArrowUpDown
                           className={cn(
                             "ml-2 h-4 w-4",
                             sortColumn === "value" &&
-                              (sortDirection === "asc" ? "text-primary" : "text-primary rotate-180"),
+                              (sortDirection === "asc"
+                                ? "text-primary"
+                                : "text-primary rotate-180")
                           )}
                         />
                       </Button>
@@ -624,14 +710,19 @@ export function CategoryManagement() {
                       <Button
                         variant="ghost"
                         onClick={() => handleSort("description")}
-                        className={cn("flex items-center", sortColumn === "description" && "font-bold")}
+                        className={cn(
+                          "flex items-center",
+                          sortColumn === "description" && "font-bold"
+                        )}
                       >
                         Beschreibung
                         <ArrowUpDown
                           className={cn(
                             "ml-2 h-4 w-4",
                             sortColumn === "description" &&
-                              (sortDirection === "asc" ? "text-primary" : "text-primary rotate-180"),
+                              (sortDirection === "asc"
+                                ? "text-primary"
+                                : "text-primary rotate-180")
                           )}
                         />
                       </Button>
@@ -640,14 +731,19 @@ export function CategoryManagement() {
                       <Button
                         variant="ghost"
                         onClick={() => handleSort("color")}
-                        className={cn("flex items-center", sortColumn === "color" && "font-bold")}
+                        className={cn(
+                          "flex items-center",
+                          sortColumn === "color" && "font-bold"
+                        )}
                       >
                         Farbe
                         <ArrowUpDown
                           className={cn(
                             "ml-2 h-4 w-4",
                             sortColumn === "color" &&
-                              (sortDirection === "asc" ? "text-primary" : "text-primary rotate-180"),
+                              (sortDirection === "asc"
+                                ? "text-primary"
+                                : "text-primary rotate-180")
                           )}
                         />
                       </Button>
@@ -695,16 +791,23 @@ export function CategoryManagement() {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>
-              {currentParentId ? `Neue Unterkategorie hinzufügen` : "Neue Kategorie hinzufügen"}
+              {currentParentId
+                ? `Neue Unterkategorie hinzufügen`
+                : "Neue Kategorie hinzufügen"}
             </DialogTitle>
             <DialogDescription>
               {currentParentId
-                ? `Erstellen Sie eine neue Unterkategorie für "${breadcrumbPath[breadcrumbPath.length - 1]?.name}".`
+                ? `Erstellen Sie eine neue Unterkategorie für "${
+                    breadcrumbPath[breadcrumbPath.length - 1]?.name
+                  }".`
                 : "Erstellen Sie eine neue Hauptkategorie für Ihre Artikel."}
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onAddSubmit)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(onAddSubmit)}
+              className="space-y-4"
+            >
               <FormField
                 control={form.control}
                 name="name"
@@ -728,7 +831,8 @@ export function CategoryManagement() {
                       <Input placeholder="kategorie-wert" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Dieser Wert wird in der Datenbank verwendet und sollte eindeutig sein.
+                      Dieser Wert wird in der Datenbank verwendet und sollte
+                      eindeutig sein.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -754,7 +858,11 @@ export function CategoryManagement() {
                   <FormItem>
                     <FormLabel>Farbe</FormLabel>
                     <div className="flex gap-2 items-center">
-                      <input type="color" {...field} className="w-10 h-10 rounded-md cursor-pointer" />
+                      <input
+                        type="color"
+                        {...field}
+                        className="w-10 h-10 rounded-md cursor-pointer"
+                      />
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -764,10 +872,18 @@ export function CategoryManagement() {
                 )}
               />
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsAddDialogOpen(false)}
+                >
                   Abbrechen
                 </Button>
-                <Button type="submit">{currentParentId ? "Unterkategorie hinzufügen" : "Kategorie hinzufügen"}</Button>
+                <Button type="submit">
+                  {currentParentId
+                    ? "Unterkategorie hinzufügen"
+                    : "Kategorie hinzufügen"}
+                </Button>
               </DialogFooter>
             </form>
           </Form>
@@ -779,10 +895,15 @@ export function CategoryManagement() {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Kategorie bearbeiten</DialogTitle>
-            <DialogDescription>Aktualisieren Sie die Informationen der Kategorie.</DialogDescription>
+            <DialogDescription>
+              Aktualisieren Sie die Informationen der Kategorie.
+            </DialogDescription>
           </DialogHeader>
           <Form {...editForm}>
-            <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
+            <form
+              onSubmit={editForm.handleSubmit(onEditSubmit)}
+              className="space-y-4"
+            >
               <FormField
                 control={editForm.control}
                 name="name"
@@ -829,7 +950,11 @@ export function CategoryManagement() {
                   <FormItem>
                     <FormLabel>Farbe</FormLabel>
                     <div className="flex gap-2 items-center">
-                      <input type="color" {...field} className="w-10 h-10 rounded-md cursor-pointer" />
+                      <input
+                        type="color"
+                        {...field}
+                        className="w-10 h-10 rounded-md cursor-pointer"
+                      />
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -839,7 +964,11 @@ export function CategoryManagement() {
                 )}
               />
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                >
                   Abbrechen
                 </Button>
                 <Button type="submit">Änderungen speichern</Button>
@@ -856,8 +985,11 @@ export function CategoryManagement() {
             <AlertDialogTitle>Sind Sie sicher?</AlertDialogTitle>
             <AlertDialogDescription>
               Dies wird die Kategorie &quot;{categoryToDelete?.name}&quot;
-              {hasChildren(categoryToDelete?.id || "") ? " und alle Unterkategorien" : ""} dauerhaft löschen. Diese
-              Aktion kann nicht rückgängig gemacht werden.
+              {hasChildren(categoryToDelete?.id || "")
+                ? " und alle Unterkategorien"
+                : ""}{" "}
+              dauerhaft löschen. Diese Aktion kann nicht rückgängig gemacht
+              werden.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -872,6 +1004,5 @@ export function CategoryManagement() {
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
+  );
 }
-
