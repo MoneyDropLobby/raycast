@@ -1,16 +1,17 @@
-import { ArticleManagement } from "@/components/article-management";
+import type { Metadata } from "next";
+import { DashboardTabs } from "@/components/tabs";
 
-// export const metadata: Metadata = {
-//   title: "Article Management | Cash Register System",
-//   description: "Manage your inventory items in the cash register system",
-// }
+export const metadata: Metadata = {
+  title: "Kassensystem | Verwaltung",
+  description: "Verwalten Sie Ihre Artikel und Kategorien im Kassensystem",
+};
 
-export default function ArtikelVerwaltung() {
+export default function Artikel_KategorienVerwaltung() {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1">
         <main className="flex-1">
-          <ArticleManagement />
+          <DashboardTabs />
         </main>
       </div>
     </div>
