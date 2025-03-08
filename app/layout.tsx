@@ -65,7 +65,13 @@ export default function RootLayout({
                 </Breadcrumb>
               </div>
             </header>
-            <div className="px-8 py-4">{children}</div>
+            <div className="flex min-h-screen flex-col">
+              <div className="flex flex-1">
+                <main className="flex-1 w-full">
+                  <div className="px-8 py-4">{children}</div>
+                </main>
+              </div>
+            </div>
           </SidebarInset>
         </SidebarProvider>
       </body>
