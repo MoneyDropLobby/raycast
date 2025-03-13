@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React from "react";
+import KategorieVerwaltung from "./verwaltung/category-management";
 import Artikelverwaltung from "./verwaltung/artikel-verwaltung";
 
 const ArtikelverwaltungsTabs = () => {
@@ -15,7 +15,7 @@ const ArtikelverwaltungsTabs = () => {
         <Artikelverwaltung />
       </TabsContent>
       <TabsContent value="kategorieverwaltung">
-        Change your password here.
+        <KategorieVerwaltung />
       </TabsContent>
     </Tabs>
   );

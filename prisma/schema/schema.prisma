@@ -18,11 +18,12 @@ model Filiale {
   id            String        @id @unique @default(cuid())
   strasse       String
   strasseNr     String
-  plz           Int
+  plz           String
   ort           String
   telefon       String?
   website       String?
   logo          String?
+  status        Status @default(AKTIV)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   userId        String
@@ -42,6 +43,7 @@ model Kassen {
   kassenLayout       KassenLayout[]
   artikeluntergruppe ArtikelUntergruppe[]
   transaktionen      Transaktion[]
+  status             Status @default(AKTIV)
 }
 
 model KassenLayout {
@@ -93,25 +95,25 @@ model Lager {
   letzterVerkauf DateTime?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  artikel        Artikel   @relation(fields: [artikelId], references: [artikelID], onDelete: Restrict)
+  artikel        Artikel   @relation(fields: [artikelId], references: [id], onDelete: Restrict)
   artikelId      Int       @unique
 }
 
 model Artikel {
-  artikelID              Int                    @id @unique @default(autoincrement())
-  artikelName            String
+  id              Int                    @id @unique @default(autoincrement())
+  externeId       String?
+  name            String
   beschreibung           String?
   verkaufspreis          Decimal                @db.Decimal(10, 2)
   verkaufspreisExkl      Boolean                @default(false)
   einkaufspreis          Decimal                @db.Decimal(10, 2)
   einkaufspreisExkl      Boolean                @default(false)
-  gewinnProzent          Decimal                @db.Decimal(10, 2)
   mwst                   MwStSatz
   ean                    String?
   warnmeldung            String?
   mindestalter           Int?
-  untergruppeId          String
-  untergruppe            ArtikelUntergruppe     @relation(fields: [untergruppeId], references: [id], onDelete: Restrict)
+  untergruppeId          String?
+  untergruppe            ArtikelUntergruppe?     @relation(fields: [untergruppeId], references: [id], onDelete: Restrict)
   verkaufsEinheit        VerkaufsEinheit        @default(STUECK)
   mengeProEinheit        Decimal                @default(1)
   status                 Status                 @default(AKTIV)
@@ -125,7 +127,7 @@ model Artikel {
   transaktionsPositionen TransaktionsPosition[]
 
   @@index([ean])
-  @@index([artikelName])
+  @@index([name])
   @@index([status])
 }
 
@@ -157,7 +159,7 @@ model TransaktionsPosition {
   transaktionId String
   transaktion   Transaktion @relation(fields: [transaktionId], references: [id], onDelete: Cascade)
   artikelId     Int
-  artikel       Artikel     @relation(fields: [artikelId], references: [artikelID], onDelete: Restrict)
+  artikel       Artikel     @relation(fields: [artikelId], references: [id], onDelete: Restrict)
   menge         Decimal
   einzelpreis   Decimal
   rabattProzent Decimal     @default(0)
