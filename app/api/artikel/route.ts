@@ -1,3 +1,4 @@
+import ArtikelErstellen from "@/lib/actions";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -5,5 +6,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  return NextResponse.json({ message: "Hello POST" });
+  const body = await req.json();
+  await ArtikelErstellen(body);
+  // return NextResponse.json({ message: "Hello POST" });
 }

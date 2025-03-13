@@ -49,9 +49,7 @@ const ArtikelDataTable = ({ artikel }: { artikel: ArtikelData[] }) => {
               <TableCell className="text-center">
                 <Badge
                   variant={
-                    artikel.status === Status.AKTIV
-                      ? "secondary"
-                      : "destructive"
+                    artikel.status === Status.AKTIV ? "success" : "destructive"
                   }
                 >
                   {artikel.status.toString()}

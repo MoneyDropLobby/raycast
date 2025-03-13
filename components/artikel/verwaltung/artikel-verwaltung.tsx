@@ -12,6 +12,7 @@ import { Plus } from "lucide-react";
 import React from "react";
 import ArtikelDataTable from "./artikel-data-table";
 import { prisma } from "@/lib/prisma";
+import ArtikelErstellDialog from "../artikel-erstell-dialog";
 
 const Artikelverwaltung = async () => {
   const artikel = await prisma.artikel.findMany({
@@ -31,6 +32,7 @@ const Artikelverwaltung = async () => {
       id: "asc",
     },
   });
+  if (!artikel) return null;
 
   return (
     <>
@@ -38,10 +40,7 @@ const Artikelverwaltung = async () => {
         heading="Artikelverwaltung"
         description="Fügen Sie Artikel hinzu, bearbeiten und verwalten Sie Ihren Bestand im System."
       >
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Artikel erstellen
-        </Button>
+        <ArtikelErstellDialog />
       </DashboardHeader>
       <div className="w-full">
         <div className="flex gap-2">

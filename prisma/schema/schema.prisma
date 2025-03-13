@@ -23,7 +23,7 @@ model Filiale {
   telefon       String?
   website       String?
   logo          String?
-  status        Status @default(AKTIV)
+  status        Status        @default(AKTIV)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   userId        String
@@ -43,7 +43,7 @@ model Kassen {
   kassenLayout       KassenLayout[]
   artikeluntergruppe ArtikelUntergruppe[]
   transaktionen      Transaktion[]
-  status             Status @default(AKTIV)
+  status             Status               @default(AKTIV)
 }
 
 model KassenLayout {
@@ -100,20 +100,20 @@ model Lager {
 }
 
 model Artikel {
-  id              Int                    @id @unique @default(autoincrement())
-  externeId       String?
-  name            String
+  id                     Int                    @id @unique @default(autoincrement())
+  externeId              String?
+  name                   String
   beschreibung           String?
   verkaufspreis          Decimal                @db.Decimal(10, 2)
   verkaufspreisExkl      Boolean                @default(false)
   einkaufspreis          Decimal                @db.Decimal(10, 2)
   einkaufspreisExkl      Boolean                @default(false)
   mwst                   MwStSatz
-  ean                    String?
+  barcodes               Barcode[]
   warnmeldung            String?
   mindestalter           Int?
   untergruppeId          String?
-  untergruppe            ArtikelUntergruppe?     @relation(fields: [untergruppeId], references: [id], onDelete: Restrict)
+  untergruppe            ArtikelUntergruppe?    @relation(fields: [untergruppeId], references: [id], onDelete: Restrict)
   verkaufsEinheit        VerkaufsEinheit        @default(STUECK)
   mengeProEinheit        Decimal                @default(1)
   status                 Status                 @default(AKTIV)
@@ -126,7 +126,6 @@ model Artikel {
   lager                  Lager?
   transaktionsPositionen TransaktionsPosition[]
 
-  @@index([ean])
   @@index([name])
   @@index([status])
 }
@@ -186,4 +185,13 @@ model TransaktionsZahlung {
   updatedAt     DateTime    @updatedAt
 
   @@index([transaktionId])
+}
+
+model Barcode {
+  id        String   @id @unique @default(cuid())
+  ean       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Artikel   Artikel? @relation(fields: [artikelId], references: [id])
+  artikelId Int?
 }
