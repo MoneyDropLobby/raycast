@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import KategorieVerwaltung from "./verwaltung/category-management";
+
 import Artikelverwaltung from "./verwaltung/artikel-verwaltung";
+import KategorieVerwaltung from "./verwaltung/kategorie-verwaltung";
 
 const ArtikelverwaltungsTabs = () => {
   return (
