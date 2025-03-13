@@ -1,11 +1,14 @@
-import type React from "react"
 interface DashboardHeaderProps {
-  heading: string
-  description?: string
-  children?: React.ReactNode
+  heading: string;
+  description?: string;
+  children?: React.ReactNode;
 }
 
-export function DashboardHeader({ heading, description, children }: DashboardHeaderProps) {
+export function DashboardHeader({
+  heading,
+  description,
+  children,
+}: DashboardHeaderProps) {
   return (
     <div className="flex items-center justify-between px-2 py-4">
       <div className="grid gap-1">
@@ -14,6 +17,5 @@ export function DashboardHeader({ heading, description, children }: DashboardHea
       </div>
       {children}
     </div>
-  )
+  );
 }
-
