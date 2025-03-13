@@ -88,12 +88,8 @@ const data = {
       icon: Bot,
       items: [
         {
-          title: "Artikelverwaltung",
+          title: "Artikel & Kategorien",
           url: "/artikel/verwaltung",
-        },
-        {
-          title: "Kategorien",
-          url: "#",
         },
         {
           title: "Preise & Rabatte",

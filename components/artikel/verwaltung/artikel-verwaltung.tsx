@@ -40,7 +40,7 @@ const Artikelverwaltung = async () => {
       >
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Artikel hinzufügen
+          Artikel erstellen
         </Button>
       </DashboardHeader>
       <div className="w-full">
