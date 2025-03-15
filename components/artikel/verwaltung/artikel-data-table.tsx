@@ -12,16 +12,8 @@ import { Status } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
 import { Pencil } from "lucide-react";
 
-interface ArtikelData {
-  id: number;
-  name: string;
-  ean: string | null;
-  untergruppe: { name: string } | null;
-  verkaufspreis: Decimal;
-  status: Status;
-}
-
-const ArtikelDataTable = ({ artikel }: { artikel: ArtikelData[] }) => {
+const ArtikelDataTable = ({ artikel }: { artikel: any[] }) => {
+  console.log(artikel);
   return (
     <div className="mt-4 rounded-md border">
       <Table>
@@ -41,7 +33,7 @@ const ArtikelDataTable = ({ artikel }: { artikel: ArtikelData[] }) => {
             <TableRow key={artikel.id}>
               <TableCell>{artikel.id}</TableCell>
               <TableCell>{artikel.name}</TableCell>
-              <TableCell>{artikel.ean || ""}</TableCell>
+              <TableCell>{artikel.eanCodes[0] || ""}</TableCell>
               <TableCell>{artikel.untergruppe?.name || ""}</TableCell>
               <TableCell className="text-right">
                 {Number(artikel.verkaufspreis).toFixed(2)}

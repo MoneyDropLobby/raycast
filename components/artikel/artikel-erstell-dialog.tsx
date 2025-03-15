@@ -16,7 +16,7 @@ import ArtikelErstellForm from "./artikel-erstell-form";
 const ArtikelErstellDialog = () => {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
           Artikel erstellen

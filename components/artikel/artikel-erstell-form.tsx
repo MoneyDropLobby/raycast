@@ -46,7 +46,7 @@ const ArtikelErstellForm = () => {
       einkaufspreis: 0,
       bestand: 0,
       categoryId: "",
-      barcode: [],
+      eanCodes: [], // Geändert von ean zu eanCodes
     },
   });
 
@@ -59,7 +59,7 @@ const ArtikelErstellForm = () => {
     setBarcodeEntries(updatedEntries);
 
     // Aktualisiere die Barcode-Codes im Formular
-    form.setValue("barcode", updatedEntries);
+    form.setValue("eanCodes", updatedEntries); // Geändert von ean zu eanCodes
 
     setNewBarcode("");
   };
@@ -71,7 +71,7 @@ const ArtikelErstellForm = () => {
     setBarcodeEntries(updatedEntries);
 
     // Aktualisiere die Barcode-Codes im Formular
-    form.setValue("barcode", updatedEntries);
+    form.setValue("eanCodes", updatedEntries); // Geändert von ean zu eanCodes
   };
 
   // Funktion zum Generieren eines zufälligen Barcodes
@@ -94,15 +94,12 @@ const ArtikelErstellForm = () => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof artikelErstellSchema>) {
-    // const request = await fetch("/api/artikel", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(values),
-    // });
-    const req = await ArtikelErstellen(values);
-    console.log(req);
+    // Die EAN-Codes werden jetzt als Objekte mit name-Attribut übermittelt
+    // const formattedValues = {
+    //   ...values,
+    //   eanCodes: values.eanCodes.map((code) => ({ name: code })),
+    // };
+    console.log(values);
   }
 
   return (

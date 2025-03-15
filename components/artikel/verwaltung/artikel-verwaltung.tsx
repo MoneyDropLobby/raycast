@@ -19,7 +19,7 @@ const Artikelverwaltung = async () => {
     select: {
       id: true,
       name: true,
-      ean: true,
+      eanCodes: true,
       untergruppe: {
         select: {
           name: true,
