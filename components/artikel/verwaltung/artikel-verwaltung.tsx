@@ -1,5 +1,9 @@
 import { DashboardHeader } from "@/components/dashboard-header";
-import { Button } from "@/components/ui/button";
+import ArtikelErstellDialog from "../artikel-erstell-dialog";
+import ArtikelDataTable from "./artikel-data-table";
+
+import { prisma } from "@/lib/prisma";
+
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -8,11 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus } from "lucide-react";
-import React from "react";
-import ArtikelDataTable from "./artikel-data-table";
-import { prisma } from "@/lib/prisma";
-import ArtikelErstellDialog from "../artikel-erstell-dialog";
 
 const Artikelverwaltung = async () => {
   const artikel = await prisma.artikel.findMany({

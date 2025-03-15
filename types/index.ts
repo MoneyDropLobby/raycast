@@ -43,3 +43,12 @@ export interface ArticleSubGroup extends ArticleGroup {
   parentId: string;
   articles?: Article[];
 }
+
+export interface APIResponse {
+  success: boolean;
+  data?: {};
+  error?: {
+    message: string;
+    code: number;
+  };
+}

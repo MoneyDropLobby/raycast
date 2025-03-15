@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { artikelErstellSchema } from "@/lib/validation-schema";
 
 import { z } from "zod";
@@ -17,26 +18,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "../ui/button";
-import { Plus, Trash, RefreshCw } from "lucide-react";
-import { useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import ArtikelErstellen from "@/lib/actions";
-
-// Vereinfachen des Barcode-Typs - nur noch der Code selbst wird gespeichert
-type BarcodeEntry = string;
+import MultipleSelector from "@/components/multi-selection";
+import { APIResponse } from "@/types";
 
 const ArtikelErstellForm = () => {
   const [newBarcode, setNewBarcode] = useState("");
-  const [barcodeEntries, setBarcodeEntries] = useState<BarcodeEntry[]>([]);
 
-  // 1. Define your form.
+  // 1. Define your form mit Barcode-Logik
   const form = useForm<z.infer<typeof artikelErstellSchema>>({
     resolver: zodResolver(artikelErstellSchema),
     defaultValues: {
@@ -46,61 +34,30 @@ const ArtikelErstellForm = () => {
       einkaufspreis: 0,
       bestand: 0,
       categoryId: "",
-      eanCodes: [], // Geändert von ean zu eanCodes
+      eanCodes: [], // eanCodes bleiben im Formular
     },
   });
 
-  // Funktion zum Hinzufügen eines Barcodes
-  const addBarcode = () => {
-    if (!newBarcode.trim()) return;
-
-    // Aktualisiere die Barcode-Einträge
-    const updatedEntries = [...barcodeEntries, newBarcode.trim()];
-    setBarcodeEntries(updatedEntries);
-
-    // Aktualisiere die Barcode-Codes im Formular
-    form.setValue("eanCodes", updatedEntries); // Geändert von ean zu eanCodes
-
-    setNewBarcode("");
-  };
-
-  // Funktion zum Entfernen eines Barcodes
-  const removeBarcode = (index: number) => {
-    // Entferne aus den Barcode-Einträgen
-    const updatedEntries = barcodeEntries.filter((_, i) => i !== index);
-    setBarcodeEntries(updatedEntries);
-
-    // Aktualisiere die Barcode-Codes im Formular
-    form.setValue("eanCodes", updatedEntries); // Geändert von ean zu eanCodes
-  };
-
-  // Funktion zum Generieren eines zufälligen Barcodes
-  const generateBarcode = () => {
-    // Generiere einen 13-stelligen EAN-13 Barcode (übliches Format)
-    const randomDigits = Array.from({ length: 12 }, () =>
-      Math.floor(Math.random() * 10)
-    ).join("");
-
-    // Berechne die Prüfziffer für EAN-13
-    let sum = 0;
-    for (let i = 0; i < 12; i++) {
-      sum += parseInt(randomDigits[i]) * (i % 2 === 0 ? 1 : 3);
-    }
-    const checkDigit = (10 - (sum % 10)) % 10;
-
-    const generatedBarcode = randomDigits + checkDigit;
-    setNewBarcode(generatedBarcode);
-  };
-
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof artikelErstellSchema>) {
-    // Die EAN-Codes werden jetzt als Objekte mit name-Attribut übermittelt
-    // const formattedValues = {
-    //   ...values,
-    //   eanCodes: values.eanCodes.map((code) => ({ name: code })),
-    // };
-    console.log(values);
+    try {
+      const response = await fetch("/api/artikel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      // Erfolgsbenachrichtigung oder Weiterleitung
+    } catch (error) {
+      // Fehlermeldung anzeigen
+    }
   }
+
+  // Debug-Funktion, um Formularvalidierungsfehler anzuzeigen
+  const formErrors = form.formState.errors;
+  console.log("Formularfehler:", formErrors);
 
   return (
     <>
@@ -109,7 +66,6 @@ const ArtikelErstellForm = () => {
           <Tabs defaultValue="grunddaten" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="grunddaten">Grunddaten</TabsTrigger>
-
               <TabsTrigger value="barcodes">Barcodes</TabsTrigger>
             </TabsList>
 
@@ -213,62 +169,69 @@ const ArtikelErstellForm = () => {
             </TabsContent>
 
             <TabsContent value="barcodes">
-              <div className="flex gap-4 items-end my-4">
-                <div className="flex-1 relative">
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        placeholder="Barcode"
-                        value={newBarcode}
-                        onChange={(e) => setNewBarcode(e.target.value)}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-0 top-0 h-full"
-                        onClick={generateBarcode}
-                        title="Barcode generieren"
-                      >
-                        <RefreshCw size={16} />
-                      </Button>
-                    </div>
-                  </FormControl>
-                </div>
-                <Button type="button" onClick={addBarcode}>
-                  <Plus size={16} />
-                  Barcode hinzufügen
-                </Button>
-              </div>
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="eanCodes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>EAN-Codes</FormLabel>
+                      <FormControl>
+                        <MultipleSelector
+                          {...field}
+                          placeholder="EAN-Codes eingeben oder hinzufügen..."
+                          creatable
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              {barcodeEntries.length > 0 && (
-                <div className="border rounded-md">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Barcode</TableHead>
-                        <TableHead className="w-20">Aktion</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {barcodeEntries.map((code, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{code}</TableCell>
-                          <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeBarcode(index)}
-                            >
-                              <Trash size={16} className="text-red-500" />
-                            </Button>
-                          </TableCell>
+                {/* {form.watch("eanCodes").length > 0 && (
+                  <div className="border rounded-md p-3">
+                    <h3 className="text-sm font-medium mb-2">
+                      Hinzugefügte EAN-Codes
+                    </h3>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>EAN-Code</TableHead>
+                          <TableHead className="w-[100px]">Aktion</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+                      </TableHeader>
+                      <TableBody>
+                        {form.watch("eanCodes").map((code, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{code}</TableCell>
+                            <TableCell>
+                              <Button
+                                type="button"
+                                size="icon"
+                                variant="ghost"
+                                onClick={() => {
+                                  const currentCodes =
+                                    form.getValues("eanCodes");
+                                  const updatedCodes = currentCodes.filter(
+                                    (_, i) => i !== index
+                                  );
+                                  form.setValue("eanCodes", updatedCodes, {
+                                    shouldValidate: true,
+                                    shouldDirty: true,
+                                    shouldTouch: true,
+                                  });
+                                }}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )} */}
+              </div>
             </TabsContent>
           </Tabs>
 
