@@ -46,9 +46,9 @@ export interface ArticleSubGroup extends ArticleGroup {
 
 export interface APIResponse {
   success: boolean;
-  data?: {};
+  data?: any;
   error?: {
     message: string;
-    code: number;
+    details?: any;
   };
 }

@@ -1,35 +1,36 @@
-import React from "react";
+"use client";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-import { Button } from "../ui/button";
-import { Plus } from "lucide-react";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "lucide-react";
+import { useState } from "react";
 import ArtikelErstellForm from "./artikel-erstell-form";
 
 const ArtikelErstellDialog = () => {
+  const [open, setOpen] = useState(false);
+
+  const handleSuccess = () => {
+    setOpen(false);
+  };
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Artikel erstellen
+          <PlusIcon className="mr-2 h-4 w-4" />
+          Artikel hinzufügen
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Neuen Artikel hinzufügen</DialogTitle>
-          <DialogDescription>
-            Fügen Sie einen neuen Artikel zu Ihrem Bestand hinzu. Füllen Sie
-            alle erforderlichen Felder aus.
-          </DialogDescription>
+          <DialogTitle>Neuen Artikel erstellen</DialogTitle>
         </DialogHeader>
-
-        <ArtikelErstellForm />
+        <ArtikelErstellForm onSuccess={handleSuccess} />
       </DialogContent>
     </Dialog>
   );

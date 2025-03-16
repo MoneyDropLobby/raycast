@@ -20,8 +20,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "../ui/button";
 import MultipleSelector from "@/components/multi-selection";
 import { APIResponse } from "@/types";
+import { toast } from "sonner";
 
-const ArtikelErstellForm = () => {
+interface ArtikelErstellFormProps {
+  onSuccess?: () => void;
+}
+
+const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
   const [newBarcode, setNewBarcode] = useState("");
 
   // 1. Define your form mit Barcode-Logik
@@ -49,9 +54,35 @@ const ArtikelErstellForm = () => {
         body: JSON.stringify(values),
       });
 
-      // Erfolgsbenachrichtigung oder Weiterleitung
+      const data: APIResponse = await response.json();
+
+      switch (response.status) {
+        case 201:
+          toast.success("Artikel erfolgreich erstellt");
+          form.reset();
+          if (onSuccess) {
+            onSuccess();
+          }
+          break;
+        case 400:
+          toast.error(data.error?.message || "Ungültige Eingabedaten");
+          break;
+        case 401:
+        case 403:
+          toast.error("Keine Berechtigung zum Erstellen des Artikels");
+          break;
+        case 409:
+          toast.error(data.error?.message || "Artikel existiert bereits");
+          break;
+        case 500:
+          toast.error("Serverfehler beim Erstellen des Artikels");
+          break;
+        default:
+          toast.error(`Fehler: ${data.error?.message || "Unbekannter Fehler"}`);
+      }
     } catch (error) {
-      // Fehlermeldung anzeigen
+      console.error("Netzwerkfehler:", error);
+      toast.error("Verbindungsfehler beim Erstellen des Artikels");
     }
   }
 
