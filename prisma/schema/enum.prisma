@@ -10,10 +10,10 @@ enum Status {
 }
 
 enum MwStSatz {
-  NORMAL    @map("8.10") /// 8.1% Normalsatz
-  REDUZIERT @map("2.60") /// 2.6% Reduzierter Satz
-  SONDER    @map("3.80") /// 3.8% Sondersatz
-  OHNE      @map("0.00") /// 0% Befreit
+  NORMAL   @map("8.1") /// 8.1% Normalsatz
+  REDUZIERT @map("2.6") /// 2.6% Reduzierter Satz
+  SONDER    @map("3.8") /// 3.8% Sondersatz
+  OHNE      @map("0.0") /// 0% Befreit
 }
 
 enum VerkaufsEinheit {

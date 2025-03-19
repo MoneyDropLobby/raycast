@@ -21,25 +21,31 @@ import { Button } from "../ui/button";
 import MultipleSelector from "@/components/multi-selection";
 import { APIResponse } from "@/types";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 interface ArtikelErstellFormProps {
   onSuccess?: () => void;
 }
 
 const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
-  const [newBarcode, setNewBarcode] = useState("");
-
   // 1. Define your form mit Barcode-Logik
   const form = useForm<z.infer<typeof artikelErstellSchema>>({
     resolver: zodResolver(artikelErstellSchema),
     defaultValues: {
       name: "",
       beschreibung: undefined,
-      preis: 0,
+      verkaufspreis: 0,
       einkaufspreis: 0,
       bestand: 0,
       categoryId: "",
       eanCodes: [], // eanCodes bleiben im Formular
+      verkaufsEinheit: "STUECK", // Default-Wert für Verkaufseinheit
     },
   });
 
@@ -117,7 +123,7 @@ const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
                 />
                 <FormField
                   control={form.control}
-                  name="preis"
+                  name="verkaufspreis"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Verkaufspreis</FormLabel>
@@ -175,6 +181,84 @@ const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
                           type="number"
                           {...field}
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="bestand"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Lagerbestand</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Lagerbestand"
+                          type="number"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="mwstSatz"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>MwSt. Satz</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="MwSt. Satz" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {/* Note: Import SelectItem from "../ui/select" */}
+                            <SelectItem value="8.1">8.1%</SelectItem>
+                            <SelectItem value="3.8">3.8%</SelectItem>
+                            <SelectItem value="2.6">2.6%</SelectItem>
+                            <SelectItem value="0">0%</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="verkaufsEinheit"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Verkaufseinheit</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Verkaufseinheit wählen" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="STUECK">Stück</SelectItem>
+                            <SelectItem value="GRAMM">Gramm</SelectItem>
+                            <SelectItem value="KILOGRAMM">Kilogramm</SelectItem>
+                            <SelectItem value="LITER">Liter</SelectItem>
+                            <SelectItem value="MILLILITER">
+                              Milliliter
+                            </SelectItem>
+                            <SelectItem value="METER">Meter</SelectItem>
+                            <SelectItem value="ZENTIMETER">
+                              Zentimeter
+                            </SelectItem>
+                            <SelectItem value="PACKUNG">Packung</SelectItem>
+                            <SelectItem value="KARTON">Karton</SelectItem>
+                            <SelectItem value="PALETTE">Palette</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
