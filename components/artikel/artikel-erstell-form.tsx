@@ -40,7 +40,6 @@ const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
     defaultValues: {
       name: "",
       beschreibung: undefined,
-      verkaufspreis: 0,
       einkaufspreis: 0,
       bestand: 0,
       categoryId: "",
@@ -106,181 +105,168 @@ const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
               <TabsTrigger value="barcodes">Barcodes</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="grunddaten">
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="verkaufspreis"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Verkaufspreis</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Verkaufspreis"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="categoryId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Kategorie</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Kategorie" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <TabsContent value="grunddaten" className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="verkaufspreis"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Verkaufspreis</FormLabel>
+                    <FormControl>
+                      <Input placeholder="10.00" type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Kategorie</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Kategorie" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="einkaufspreis"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Einkaufspreis</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Einkaufspreis"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="bestand"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Lagerbestand</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Lagerbestand"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="bestand"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Lagerbestand</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Lagerbestand"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="mwstSatz"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>MwSt. Satz</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="MwSt. Satz" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {/* Note: Import SelectItem from "../ui/select" */}
-                            <SelectItem value="8.1">8.1%</SelectItem>
-                            <SelectItem value="3.8">3.8%</SelectItem>
-                            <SelectItem value="2.6">2.6%</SelectItem>
-                            <SelectItem value="0">0%</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="einkaufspreis"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Einkaufspreis</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Einkaufspreis"
+                        type="number"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="bestand"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Lagerbestand</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Lagerbestand"
+                        type="number"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="bestand"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Lagerbestand</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Lagerbestand"
+                        type="number"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="mwstSatz"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>MwSt. Satz</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="MwSt. Satz" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {/* Note: Import SelectItem from "../ui/select" */}
+                          <SelectItem value="8.1">8.1%</SelectItem>
+                          <SelectItem value="3.8">3.8%</SelectItem>
+                          <SelectItem value="2.6">2.6%</SelectItem>
+                          <SelectItem value="0">0%</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="verkaufsEinheit"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Verkaufseinheit</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Verkaufseinheit wählen" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="STUECK">Stück</SelectItem>
-                            <SelectItem value="GRAMM">Gramm</SelectItem>
-                            <SelectItem value="KILOGRAMM">Kilogramm</SelectItem>
-                            <SelectItem value="LITER">Liter</SelectItem>
-                            <SelectItem value="MILLILITER">
-                              Milliliter
-                            </SelectItem>
-                            <SelectItem value="METER">Meter</SelectItem>
-                            <SelectItem value="ZENTIMETER">
-                              Zentimeter
-                            </SelectItem>
-                            <SelectItem value="PACKUNG">Packung</SelectItem>
-                            <SelectItem value="KARTON">Karton</SelectItem>
-                            <SelectItem value="PALETTE">Palette</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="beschreibung"
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel>Beschreibung</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Produktbeschreibung"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="verkaufsEinheit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Verkaufseinheit</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Verkaufseinheit wählen" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="STUECK">Stück</SelectItem>
+                          <SelectItem value="GRAMM">Gramm</SelectItem>
+                          <SelectItem value="KILOGRAMM">Kilogramm</SelectItem>
+                          <SelectItem value="LITER">Liter</SelectItem>
+                          <SelectItem value="MILLILITER">Milliliter</SelectItem>
+                          <SelectItem value="METER">Meter</SelectItem>
+                          <SelectItem value="ZENTIMETER">Zentimeter</SelectItem>
+                          <SelectItem value="PACKUNG">Packung</SelectItem>
+                          <SelectItem value="KARTON">Karton</SelectItem>
+                          <SelectItem value="PALETTE">Palette</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="beschreibung"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Beschreibung</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Produktbeschreibung" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </TabsContent>
 
             <TabsContent value="barcodes">

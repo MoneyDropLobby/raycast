@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
   }
 
   // Save the data to the database with prisma
-  const savedData = prisma.artikel.create({
-    data: parsed.data,
-  });
+  // const savedData = prisma.artikel.create({
+  //   data: parsed.data,
+  // });
   return NextResponse.json(
     {
       success: true,
