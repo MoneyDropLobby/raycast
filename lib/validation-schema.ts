@@ -5,7 +5,9 @@ import { z } from "zod";
 export const artikelErstellSchema = z.object({
   name: z.string().min(1, "Name ist erforderlich"),
   beschreibung: z.string().optional(),
-  verkaufspreis: z.number().min(0, "Preis kann nicht negativ sein"),
+  verkaufspreis: z
+    .number({ message: "Nur Zahlen sind erlaubt" })
+    .min(0, "Preis kann nicht negativ sein"),
   einkaufspreis: z.number().min(0, "Preis kann nicht negativ sein"),
   mwstSatz: z.enum(["8.1", "2.6", "3.8", "0"]),
   verkaufsEinheit: z

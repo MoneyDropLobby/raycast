@@ -40,7 +40,8 @@ const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
     defaultValues: {
       name: "",
       beschreibung: undefined,
-      einkaufspreis: 0,
+      einkaufspreis: 0.0,
+      verkaufspreis: 0.0,
       bestand: 0,
       categoryId: "",
       eanCodes: [], // eanCodes bleiben im Formular
