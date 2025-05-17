@@ -37,16 +37,6 @@ const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
   // 1. Define your form mit Barcode-Logik
   const form = useForm<z.infer<typeof artikelErstellSchema>>({
     resolver: zodResolver(artikelErstellSchema),
-    defaultValues: {
-      name: "",
-      beschreibung: undefined,
-      einkaufspreis: 0.0,
-      verkaufspreis: 0.0,
-      bestand: 0,
-      categoryId: "",
-      eanCodes: [], // eanCodes bleiben im Formular
-      verkaufsEinheit: "STUECK", // Default-Wert für Verkaufseinheit
-    },
   });
 
   // 2. Define a submit handler.
@@ -127,7 +117,15 @@ const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
                   <FormItem>
                     <FormLabel>Verkaufspreis</FormLabel>
                     <FormControl>
-                      <Input placeholder="10.00" type="number" {...field} />
+                      <Input
+                        placeholder="10.00"
+                        type="number"
+                        onChange={(e) => field.onChange(+e.target.value)}
+                        value={field.value ?? ""}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -150,6 +148,7 @@ const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
               <FormField
                 control={form.control}
                 name="einkaufspreis"
+                defaultValue={0}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Einkaufspreis</FormLabel>
@@ -157,7 +156,11 @@ const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
                       <Input
                         placeholder="Einkaufspreis"
                         type="number"
-                        {...field}
+                        onChange={(e) => field.onChange(+e.target.value)}
+                        value={field.value ?? ""}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
                       />
                     </FormControl>
                     <FormMessage />
@@ -174,7 +177,11 @@ const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
                       <Input
                         placeholder="Lagerbestand"
                         type="number"
-                        {...field}
+                        onChange={(e) => field.onChange(+e.target.value)}
+                        value={field.value ?? ""}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
                       />
                     </FormControl>
                     <FormMessage />
@@ -191,7 +198,11 @@ const ArtikelErstellForm = ({ onSuccess }: ArtikelErstellFormProps) => {
                       <Input
                         placeholder="Lagerbestand"
                         type="number"
-                        {...field}
+                        onChange={(e) => field.onChange(+e.target.value)}
+                        value={field.value ?? ""}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
                       />
                     </FormControl>
                     <FormMessage />

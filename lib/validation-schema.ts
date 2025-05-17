@@ -26,10 +26,12 @@ export const artikelErstellSchema = z.object({
     .default("STUECK"),
   bestand: z.number().int().min(0, "Bestand kann nicht negativ sein"),
   categoryId: z.string().optional(),
-  eanCodes: z.array(
-    z.object({
-      label: z.string().min(3, "EAN-Code-Label ist erforderlich"),
-      value: z.string(),
-    })
-  ),
+  eanCodes: z
+    .array(
+      z.object({
+        label: z.string().min(3, "EAN-Code-Label ist erforderlich"),
+        value: z.string(),
+      })
+    )
+    .optional(),
 });
